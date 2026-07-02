@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isTalonOneAe() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email.matches('.*@talon[.]one$');
+    }
+
+    // rooms/{slug} is the prospect-facing document: anyone with the link can
+    // read it (the slug itself is the access control — see the workspace
+    // Home plan's "audience model"), but the collection can never be listed,
+    // so nobody can enumerate other prospects' rooms. Only the owning AE can
+    // write, and only a talon.one account can ever become an owner.
+    match /rooms/{slug} {
+      allow get: if true;
+      allow list: if false;
+
+      allow create: if isTalonOneAe()
+        && request.resource.data.ownerUid == request.auth.uid;
+
+      allow update: if isTalonOneAe()
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid;
+
+      allow delete: if false;
+
+      // Buyer Intent Signals: internal-only telemetry. Split into its own
+      // document (instead of a field on `rooms/{slug}`) because security
+      // rules can't redact individual fields from a `get` — this is the
+      // only way a prospect's anonymous read of the parent doc can never
+      // see it, not just have it hidden client-side.
+      match /private/engagement {
+        allow read, write: if isTalonOneAe()
+          && get(/databases/$(database)/documents/rooms/$(slug)).data.ownerUid == request.auth.uid;
+      }
+    }
+  }
+}

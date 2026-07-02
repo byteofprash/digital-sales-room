@@ -1,13 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { BellIcon } from '@heroicons/vue/24/outline'
 import { PencilIcon, CheckIcon } from '@heroicons/vue/24/solid'
 import { useSessionStore } from '@/stores/session'
 import { useEditModeStore } from '@/stores/editMode'
+import { firebaseEnabled } from '@/lib/firebase'
 
 defineProps<{ activeSectionLabel: string }>()
 
 const session = useSessionStore()
 const editMode = useEditModeStore()
+
+const avatarInitials = computed(() => {
+  if (!session.isAeAuthenticated) return '?'
+  if (!session.aeName) return 'AE'
+  return session.aeName
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+})
 </script>
 
 <template>
@@ -27,14 +40,17 @@ const editMode = useEditModeStore()
 
     <div class="mx-1 h-4.5 w-px bg-t1-line"></div>
 
-    <!-- Dev-only stand-in for real AE auth (Phase 1: Google Workspace SSO) -->
-    <button
-      v-if="!session.isAeAuthenticated"
-      class="rounded-md border border-t1-line px-3 py-1.5 text-[11px] font-semibold text-t1-ink-2 transition-colors hover:border-t1-ink-2"
-      @click="session.signInAsAe"
-    >
-      Sign in as AE
-    </button>
+    <template v-if="!session.isAeAuthenticated">
+      <span v-if="session.authError" class="text-[11px] font-semibold text-t1-danger">
+        {{ session.authError }}
+      </span>
+      <button
+        class="rounded-md border border-t1-line px-3 py-1.5 text-[11px] font-semibold text-t1-ink-2 transition-colors hover:border-t1-ink-2"
+        @click="session.signInAsAe"
+      >
+        {{ firebaseEnabled ? 'Sign in with Google' : 'Sign in as AE (dev)' }}
+      </button>
+    </template>
 
     <template v-else>
       <button
@@ -73,9 +89,7 @@ const editMode = useEditModeStore()
     </button>
 
     <div class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-electric">
-      <span class="text-[11px] font-bold text-white">{{
-        session.isAeAuthenticated ? 'AE' : '?'
-      }}</span>
+      <span class="text-[11px] font-bold text-white">{{ avatarInitials }}</span>
     </div>
   </div>
 </template>

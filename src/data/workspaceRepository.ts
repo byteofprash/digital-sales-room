@@ -1,5 +1,7 @@
 import type { Workspace } from './types'
-import { acmeCorpWorkspace } from './fixtures/acme-corp'
+import { seedFixtures } from './fixtures'
+import { firebaseEnabled } from '@/lib/firebase'
+import { firestoreWorkspaceRepository } from './firestoreWorkspaceRepository'
 
 const STORAGE_PREFIX = 'dsr:workspace:'
 
@@ -9,10 +11,6 @@ export interface WorkspaceRepository {
     slug: string,
     updater: (workspace: Workspace) => Workspace,
   ): Promise<Workspace>
-}
-
-const seedFixtures: Record<string, Workspace> = {
-  [acmeCorpWorkspace.slug]: acmeCorpWorkspace,
 }
 
 function loadFromStorage(slug: string): Workspace | null {
@@ -48,4 +46,13 @@ export const mockWorkspaceRepository: WorkspaceRepository = {
   },
 }
 
-export const workspaceRepository: WorkspaceRepository = mockWorkspaceRepository
+/**
+ * Firestore takes over automatically once a real Firebase project is
+ * configured (see src/lib/firebase.ts); until then every environment,
+ * including a contributor's machine with no Firebase setup at all, keeps
+ * working against the localStorage mock. No call site needs to know which
+ * one is active.
+ */
+export const workspaceRepository: WorkspaceRepository = firebaseEnabled
+  ? firestoreWorkspaceRepository
+  : mockWorkspaceRepository
