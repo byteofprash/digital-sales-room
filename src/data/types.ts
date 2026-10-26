@@ -7,7 +7,7 @@ export interface Milestone {
   status: MilestoneStatus
 }
 
-export type TeamColorway = 'electric' | 'teal' | 'lime' | 'navy'
+export type TeamColorway = 'blue' | 'pine' | 'green' | 'black'
 
 export interface TeamMember {
   id: string

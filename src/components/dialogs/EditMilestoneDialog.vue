@@ -38,20 +38,20 @@ async function save() {
   >
     <div class="flex flex-col gap-3">
       <div>
-        <label class="mb-1 block text-xs font-bold text-t1-ink-2">Label</label>
+        <label class="mb-1 block text-xs font-medium text-t1-black">Label</label>
         <input
           v-model="label"
           type="text"
           placeholder="Target Go-Live"
-          class="w-full rounded-md border border-t1-line px-2.5 py-1.5 text-[13px] text-t1-navy focus:border-t1-electric focus:outline-none"
+          class="w-full rounded-t1 border border-t1-line px-2.5 py-1.5 text-[13px] text-t1-black focus:border-t1-blue focus:outline-none"
         />
       </div>
       <div>
-        <label class="mb-1 block text-xs font-bold text-t1-ink-2">Date</label>
+        <label class="mb-1 block text-xs font-medium text-t1-black">Date</label>
         <input
           v-model="date"
           type="date"
-          class="w-full rounded-md border border-t1-line px-2.5 py-1.5 text-[13px] text-t1-navy focus:border-t1-electric focus:outline-none"
+          class="w-full rounded-t1 border border-t1-line px-2.5 py-1.5 text-[13px] text-t1-black focus:border-t1-blue focus:outline-none"
         />
       </div>
     </div>

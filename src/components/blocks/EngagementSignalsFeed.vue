@@ -6,32 +6,15 @@ defineProps<{ events: EngagementEvent[] }>()
 </script>
 
 <template>
-  <div
-    class="relative mb-6 overflow-hidden rounded-t1-md border border-t1-warning bg-white px-5.5 py-4.5 shadow-t1-card"
-  >
-    <div
-      class="absolute inset-x-0 top-0 h-[3px]"
-      style="
-        background: repeating-linear-gradient(
-          90deg,
-          #f59e0b 0px,
-          #f59e0b 12px,
-          transparent 12px,
-          transparent 20px
-        );
-      "
-    ></div>
-
-    <div class="mb-3.5 flex items-center justify-between">
+  <div class="mb-6 rounded-t1 bg-t1-black px-6 py-5">
+    <div class="mb-3 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <EyeIcon class="h-4 w-4 text-t1-warning" />
-        <div class="font-display text-base font-bold tracking-tight text-t1-navy">
-          Buyer Intent Signals
-        </div>
+        <EyeIcon class="h-4 w-4 text-t1-green" />
+        <div class="text-lg font-light tracking-tight text-white">Buyer Intent Signals</div>
       </div>
-      <div class="flex items-center gap-1.5 rounded-full border border-t1-warning bg-amber-50 px-2.5 py-1">
-        <LockClosedIcon class="h-2.5 w-2.5 text-amber-700" />
-        <span class="text-[10px] font-bold tracking-wider text-amber-700 uppercase">
+      <div class="flex items-center gap-1.5 rounded-full bg-t1-green px-2.5 py-1">
+        <LockClosedIcon class="h-2.5 w-2.5 text-t1-black" />
+        <span class="text-[10px] font-medium tracking-[0.12em] text-t1-black uppercase">
           Internal only
         </span>
       </div>
@@ -42,28 +25,28 @@ defineProps<{ events: EngagementEvent[] }>()
         v-for="(event, index) in events"
         :key="event.id"
         class="flex items-center gap-2.5 py-2.5"
-        :class="index < events.length - 1 ? 'border-b border-t1-line' : ''"
+        :class="index < events.length - 1 ? 'border-b border-t1-line-dark' : ''"
       >
         <div
           class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-          :class="event.isAnonymous ? 'bg-t1-ink-3' : 'bg-t1-electric'"
+          :class="event.isAnonymous ? 'border border-white/25' : 'bg-t1-pine'"
         >
-          <UserIcon v-if="event.isAnonymous" class="h-3 w-3 text-white" />
-          <span v-else class="text-[9px] font-bold text-white">{{ event.actorInitials }}</span>
+          <UserIcon v-if="event.isAnonymous" class="h-3 w-3 text-white/70" />
+          <span v-else class="text-[9px] font-normal text-white">{{ event.actorInitials }}</span>
         </div>
-        <div class="min-w-0 flex-1 text-[12.5px] text-t1-ink">
-          <strong class="text-t1-navy">{{ event.actorName }}</strong>
+        <div class="min-w-0 flex-1 text-[13px] font-light text-white/75">
+          <strong class="text-white">{{ event.actorName }}</strong>
           {{ event.action }}
-          <strong class="text-t1-navy">{{ event.targetLabel }}</strong>
+          <strong class="text-white">{{ event.targetLabel }}</strong>
         </div>
-        <div class="flex shrink-0 items-center gap-1.5">
+        <div class="flex shrink-0 items-center gap-2">
           <span
             v-if="event.durationLabel"
-            class="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700"
+            class="rounded-full border border-t1-green/50 px-2 py-0.5 text-[11px] font-normal text-t1-green"
           >
             {{ event.durationLabel }}
           </span>
-          <span class="text-[11px] text-t1-ink-3">{{ event.timeLabel }}</span>
+          <span class="text-[11px] font-light text-white/60">{{ event.timeLabel }}</span>
         </div>
       </div>
     </div>

@@ -13,14 +13,14 @@ export const acmeCorpWorkspace: Workspace = {
       name: 'Benedikt Zimmermann',
       role: 'Your Account Manager',
       initials: 'AE',
-      colorway: 'electric',
+      colorway: 'blue',
     },
     {
       id: 'tm-2',
       name: 'Prash Swaminathan',
       role: 'Your Solution Engineer',
       initials: 'SC',
-      colorway: 'teal',
+      colorway: 'pine',
     },
   ],
   milestones: [

@@ -1,55 +1,53 @@
-@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400..800&family=Outfit:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap");
 @import "tailwindcss";
 
 /* ============================================================
-   Talon.One Design Tokens
-   Source of truth: talon-one-design-system/colors_and_type.css
+   Talon.One Design Tokens (2026 brand, "an adyen company")
+   Neutrals carry backgrounds and type; blue and green are small
+   pops of colour only. Outfit is the only typeface, Light /
+   Regular / Medium only — no bold anywhere.
    ============================================================ */
 @theme {
-  /* Brand core */
-  --color-t1-navy: #02043b;
-  --color-t1-cream: #f7f7ef;
-  --color-t1-lime: #ccf87e;
-  --color-t1-cyan: #00c5e6;
-  --color-t1-cyan-soft: #80e2f3;
-  --color-t1-teal: #00434c;
-  --color-t1-periwinkle: #80b0ff;
-  --color-t1-electric: #0061ff;
-  --color-t1-electric-hover: #0050d4;
+  /* Neutrals: the foundation */
+  --color-t1-black: #001222;
+  --color-t1-offwhite: #f7f7ef;
 
-  /* Neutrals */
-  --color-t1-ink: #3b3b39;
-  --color-t1-ink-2: #535353;
-  --color-t1-ink-3: #a7a7a7;
-  --color-t1-line: #e2e0d7;
-  --color-t1-line-dark: #1c1e55;
+  /* Accents: small pops only. Blue on light, green on dark */
+  --color-t1-blue: #0061ff;
+  --color-t1-green: #00d16a;
+  --color-t1-pine: #00434c;
 
-  /* Semantic state */
-  --color-t1-success: #1faa7c;
-  --color-t1-warning: #f2a23b;
-  --color-t1-danger: #e54b5a;
+  /* Supporting tones: structure only, never accents */
+  --color-t1-grey: #808890;
+  --color-t1-line: #e0e0e0;
+  --color-t1-line-dark: #142a40;
+
+  /* Functional UI state, for errors and destructive actions only */
+  --color-t1-danger: #d92d3a;
 
   /* Type */
-  --font-display: "Syne", "Helvetica Neue", "Arial", sans-serif;
   --font-body: "Outfit", "Helvetica Neue", "Arial", sans-serif;
 
-  /* Radius */
-  --radius-t1-sm: 6px;
-  --radius-t1-md: 12px;
-  --radius-t1-lg: 20px;
+  /* Radius: boxes, cards and panels stay near-square; pills, chips and circles use rounded-full */
+  --radius-t1: 2px;
 
-  /* Shadow */
-  --shadow-t1-card: 0 1px 2px rgba(2, 4, 59, 0.06), 0 8px 24px rgba(2, 4, 59, 0.08);
-  --shadow-t1-lifted: 0 24px 60px rgba(2, 4, 59, 0.18);
+  /* Shadow: chips only */
+  --shadow-t1-chip: 0 2px 8px rgba(0, 18, 34, 0.12);
 }
 
 html {
   font-family: var(--font-body);
-  color: var(--color-t1-ink);
-  background: var(--color-t1-cream);
+  font-weight: 300;
+  color: var(--color-t1-black);
+  background: var(--color-t1-offwhite);
 }
 
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
+}
+
+strong,
+b {
+  font-weight: 500;
 }

@@ -38,13 +38,13 @@ watch(() => route.params.slug, loadForCurrentSlug)
       <AppTopbar active-section-label="Workspace Home" />
 
       <div class="main-scroll flex-1 overflow-y-auto px-8 py-7">
-        <div v-if="workspace.isLoading" class="py-24 text-center text-sm text-t1-ink-3">
+        <div v-if="workspace.isLoading" class="py-24 text-center text-sm text-t1-black/60">
           Loading workspace…
         </div>
 
         <div v-else-if="workspace.notFound" class="py-24 text-center">
-          <div class="font-display text-xl font-bold text-t1-navy">Room not found</div>
-          <p class="mt-2 text-sm text-t1-ink-3">
+          <div class="text-2xl font-light text-t1-black">Room not found</div>
+          <p class="mt-2 text-sm text-t1-black/65">
             No digital sales room exists at this link. Double-check the URL with your AE.
           </p>
         </div>

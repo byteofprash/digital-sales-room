@@ -24,7 +24,7 @@ const emit = defineEmits<{ close: []; save: [] }>()
         leave-from="opacity-100"
         leave-to="opacity-0"
       >
-        <div class="fixed inset-0 bg-t1-navy/40" />
+        <div class="fixed inset-0 bg-t1-black/50" />
       </TransitionChild>
 
       <div class="fixed inset-0 flex items-center justify-center p-4">
@@ -38,17 +38,17 @@ const emit = defineEmits<{ close: []; save: [] }>()
           leave-to="opacity-0 scale-95"
         >
           <DialogPanel
-            class="flex max-h-[85vh] w-full max-w-lg flex-col rounded-t1-md bg-white shadow-t1-lifted"
+            class="flex max-h-[85vh] w-full max-w-lg flex-col rounded-t1 bg-white"
           >
             <div class="flex items-center justify-between border-b border-t1-line px-5 py-4">
-              <DialogTitle class="font-display text-base font-bold text-t1-navy">
+              <DialogTitle class="text-lg font-light text-t1-black">
                 {{ title }}
               </DialogTitle>
               <button
-                class="flex h-7 w-7 items-center justify-center rounded-md hover:bg-t1-navy/5"
+                class="flex h-7 w-7 items-center justify-center rounded-full hover:bg-t1-black/5"
                 @click="emit('close')"
               >
-                <XMarkIcon class="h-4 w-4 text-t1-ink-3" />
+                <XMarkIcon class="h-4 w-4 text-t1-black/70" />
               </button>
             </div>
 
@@ -58,13 +58,13 @@ const emit = defineEmits<{ close: []; save: [] }>()
 
             <div class="flex items-center justify-end gap-2 border-t border-t1-line px-5 py-4">
               <button
-                class="rounded-md border border-t1-line px-4 py-2 text-xs font-bold text-t1-ink-2 hover:border-t1-ink-2"
+                class="rounded-full border border-t1-black/25 px-4 py-2 text-xs font-normal text-t1-black hover:border-t1-black"
                 @click="emit('close')"
               >
                 Cancel
               </button>
               <button
-                class="rounded-md bg-t1-electric px-4 py-2 text-xs font-bold text-white hover:bg-t1-electric-hover"
+                class="rounded-full bg-t1-blue px-4 py-2 text-xs font-normal text-white hover:bg-t1-blue/90"
                 @click="emit('save')"
               >
                 Save
