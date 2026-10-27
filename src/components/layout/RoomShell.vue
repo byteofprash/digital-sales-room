@@ -44,7 +44,10 @@ watch(() => route.params.slug, loadForCurrentSlug)
           </p>
         </div>
 
-        <slot v-else-if="store.workspace" :workspace="store.workspace" />
+        <!-- Same 60rem content width as the component library page; @container lets blocks adapt to it, not to the screen -->
+        <div v-else-if="store.workspace" class="@container mx-auto w-full max-w-[60rem]">
+          <slot :workspace="store.workspace" />
+        </div>
       </div>
     </main>
   </div>

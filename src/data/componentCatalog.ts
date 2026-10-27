@@ -94,7 +94,7 @@ export const componentCatalog: CatalogEntry[] = [
     visibility: 'prospect',
     editableInRoom: false,
     apiFields: ['components.timeline'],
-    previewWidth: 'full',
+    previewWidth: 'half',
   },
   {
     id: 'documents',

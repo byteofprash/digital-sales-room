@@ -2,18 +2,13 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { TimelineOwnerSide, TimelineStep } from '@/data/types'
+import { nextSteps } from '@/lib/nextSteps'
 
 const props = defineProps<{ steps: TimelineStep[]; prospectName: string }>()
 
 const route = useRoute()
 
-// The first two steps that aren't done, in date order: the current one and the one after it.
-const upcoming = computed(() =>
-  [...props.steps]
-    .filter((step) => step.status !== 'done')
-    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
-    .slice(0, 2),
-)
+const upcoming = computed(() => nextSteps(props.steps))
 
 const sideLabel = computed<Record<TimelineOwnerSide, string>>(() => ({
   talon: 'Talon.One',
@@ -31,7 +26,7 @@ function formatDate(date: string) {
 </script>
 
 <template>
-  <div v-if="upcoming.length" class="mb-6">
+  <div v-if="upcoming.length" class="@container">
     <div class="mb-4 flex items-end justify-between">
       <div>
         <div class="mb-1.5 text-[10px] font-medium tracking-[0.12em] text-t1-blue uppercase">
@@ -49,7 +44,7 @@ function formatDate(date: string) {
       </RouterLink>
     </div>
 
-    <div class="grid grid-cols-2 gap-2.5">
+    <div class="grid grid-cols-1 gap-2.5 @md:grid-cols-2">
       <div
         v-for="(step, index) in upcoming"
         :key="step.id"
