@@ -83,6 +83,20 @@ export const componentCatalog: CatalogEntry[] = [
     previewWidth: 'full',
   },
   {
+    id: 'whatsnext',
+    name: "What's next",
+    summary: 'A short view of the joint timeline: only the step in progress and the one after it.',
+    whatItShows: [
+      'The current step and the next one, with owner and due date',
+      'A link to the full timeline page',
+      'Hidden when every step is done or the timeline is empty',
+    ],
+    visibility: 'prospect',
+    editableInRoom: false,
+    apiFields: ['components.timeline'],
+    previewWidth: 'full',
+  },
+  {
     id: 'documents',
     name: 'Documents',
     summary: 'The shared files for the deal: security reports, specs, ROI models and recordings.',

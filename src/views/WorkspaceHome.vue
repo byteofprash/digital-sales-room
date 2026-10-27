@@ -7,6 +7,7 @@ import MediaSpotlight from '@/components/blocks/MediaSpotlight.vue'
 import TeamCard from '@/components/blocks/TeamCard.vue'
 import MilestoneBanner from '@/components/blocks/MilestoneBanner.vue'
 import EngagementSignalsFeed from '@/components/blocks/EngagementSignalsFeed.vue'
+import WhatsNext from '@/components/blocks/WhatsNext.vue'
 import DocumentsList from '@/components/blocks/DocumentsList.vue'
 
 const session = useSessionStore()
@@ -33,6 +34,8 @@ const session = useSessionStore()
       </div>
 
       <MilestoneBanner :target-go-live="ws.targetGoLive" />
+
+      <WhatsNext :steps="ws.components.timeline" :prospect-name="ws.prospectName" />
 
       <!-- Buyer intent telemetry is internal-only: never rendered for prospect visitors -->
       <EngagementSignalsFeed v-if="session.isAeAuthenticated" :events="ws.components.engagement" />

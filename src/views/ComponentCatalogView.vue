@@ -8,6 +8,7 @@ import LinksGrid from '@/components/blocks/LinksGrid.vue'
 import MediaSpotlight from '@/components/blocks/MediaSpotlight.vue'
 import TeamCard from '@/components/blocks/TeamCard.vue'
 import MilestoneBanner from '@/components/blocks/MilestoneBanner.vue'
+import WhatsNext from '@/components/blocks/WhatsNext.vue'
 import DocumentsList from '@/components/blocks/DocumentsList.vue'
 import EngagementSignalsFeed from '@/components/blocks/EngagementSignalsFeed.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
@@ -56,6 +57,10 @@ const previews: Record<string, { component: Component; props: Record<string, unk
     },
   },
   milestone: { component: MilestoneBanner, props: { targetGoLive: sample.targetGoLive } },
+  whatsnext: {
+    component: WhatsNext,
+    props: { steps: sample.components.timeline, prospectName: sample.prospectName },
+  },
   documents: { component: DocumentsList, props: { documents: sample.components.documents } },
   journey: {
     component: AppSidebar,
