@@ -197,6 +197,12 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
           for (const key of ['videoUrl', 'title', 'presenterName', 'presenterRole', 'postedLabel']) {
             c.str(m, key, mat, { allowEmpty: true })
           }
+          // Empty (no video yet), a site-relative path, or a full http(s) URL; the player does the rest.
+          const video = m.videoUrl
+          if (typeof video === 'string' && video.trim()) {
+            const v = video.trim()
+            if (!(v.startsWith('/') && !v.startsWith('//'))) c.url(m, 'videoUrl', mat)
+          }
         })
       }
       for (const field of ['requirements', 'architecture'] as const) {
