@@ -129,8 +129,34 @@ the front end).
 
 ## Editing rooms with an AI assistant
 
-`mcp/` is an MCP server that lets Claude (or any MCP client) create rooms and edit their contents
-through the room API. See [`mcp/README.md`](mcp/README.md) for the tools and setup.
+`POST /api/mcp` is a remote [MCP](https://modelcontextprotocol.io) server (streamable HTTP, stateless)
+so Claude or any MCP client can create rooms and edit their contents. Connect to
+`https://<your-domain>/api/mcp`:
+
+```bash
+# Claude Code
+claude mcp add --transport http digital-sales-room https://<your-domain>/api/mcp
+```
+
+For Claude.ai / Claude Desktop, add it as a custom connector with the same URL. If a client only
+speaks stdio, bridge it with `npx mcp-remote https://<your-domain>/api/mcp`.
+
+| Tool | What it does |
+| --- | --- |
+| `describe_sections` | Lists the editable sections and the exact fields each item needs |
+| `list_rooms` / `get_room` | Browse rooms, or open one in full (including item ids) |
+| `create_room` | New room for a prospect, always a draft |
+| `update_room_details` | Names, meeting/Slack links, go-live date, welcome "since last visit" list, featured video |
+| `add_item` / `update_item` / `remove_item` | Edit one entry in `links`, `documents`, `requirements`, `architecture`, `timeline`, `stories`, `team` or `milestones` without resending the list |
+| `set_room_status` | Move a room between draft, published and archived |
+
+The tools call this app's own room API, so validation and status rules are identical to the web app,
+and the caller's `Authorization` header is forwarded to it. That means **the MCP endpoint is exactly as
+open as the API**: while `DEV_AUTH_BYPASS=true`, anyone who knows the URL can edit every room and
+publish; once real sign-in is on, clients must send a Firebase ID token as a bearer token. The endpoint
+finds its own address from Vercel's system environment variables (set `ROOMS_API_URL` to override).
+Edits to a list read the room and write the whole list back, so two edits at the same instant can
+overwrite each other.
 
 ## Deploying to Vercel
 
@@ -152,7 +178,7 @@ through the room API. See [`mcp/README.md`](mcp/README.md) for the tools and set
 
 ```
 api/               Vercel serverless endpoints (room create / edit / status) + shared _lib
-mcp/               MCP server (stdio) that drives the room API for AI assistants
+  mcp.ts           Remote MCP server (/api/mcp); tool code in _lib/mcp/
 src/
   lib/firebase.ts   Firebase app/Auth/Firestore init; firebaseEnabled flag
   data/
