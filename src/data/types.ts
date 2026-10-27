@@ -91,6 +91,18 @@ export interface TimelineStep {
   status: MilestoneStatus
 }
 
+/** One recorded call, linked to Gong. */
+export interface Recording {
+  id: string
+  title: string
+  /** ISO date of the call */
+  date: string
+  /** Optional one-liner on what was covered */
+  description: string
+  /** Link to the call in Gong */
+  url: string
+}
+
 /** A reference story: a PDF or a link to a real customer's story. */
 export interface SuccessStory {
   id: string
@@ -129,5 +141,6 @@ export interface Workspace {
     timeline: TimelineStep[]
     architecture: ResourceLink[]
     stories: SuccessStory[]
+    recordings: Recording[]
   }
 }

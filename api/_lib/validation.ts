@@ -1,4 +1,5 @@
 import type {
+  Recording,
   ResourceLink,
   SuccessStory,
   TimelineStep,
@@ -29,6 +30,7 @@ export interface RoomContent {
     timeline: TimelineStep[]
     architecture: ResourceLink[]
     stories: SuccessStory[]
+    recordings: Recording[]
   }
 }
 
@@ -122,7 +124,7 @@ const ROOM_KEYS = [
   'targetGoLive',
   'components',
 ]
-const COMPONENT_KEYS = ['hero', 'links', 'media', 'documents', 'requirements', 'timeline', 'architecture', 'stories']
+const COMPONENT_KEYS = ['hero', 'links', 'media', 'documents', 'requirements', 'timeline', 'architecture', 'stories', 'recordings']
 const OWNER_SIDES = ['talon', 'prospect', 'joint']
 
 /**
@@ -216,6 +218,14 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
           c.str(t, 'ownerName', tat, { allowEmpty: true })
           c.date(t, 'dueDate', tat)
           c.oneOf(t, 'status', MILESTONE_STATUSES, tat)
+        })
+      }
+      if (comp.recordings !== undefined) {
+        c.list(comp.recordings, 'components.recordings', (r, rat) => {
+          c.str(r, 'title', rat)
+          c.date(r, 'date', rat)
+          c.str(r, 'description', rat, { allowEmpty: true })
+          c.url(r, 'url', rat)
         })
       }
       if (comp.stories !== undefined) {

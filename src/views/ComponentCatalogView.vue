@@ -5,6 +5,7 @@ import { acmeCorpWorkspace as sample } from '@/data/fixtures/acme-corp'
 import { componentCatalog, type CatalogEntry } from '@/data/componentCatalog'
 import WelcomeHeroBanner from '@/components/blocks/WelcomeHeroBanner.vue'
 import LinksGrid from '@/components/blocks/LinksGrid.vue'
+import RecordingsList from '@/components/blocks/RecordingsList.vue'
 import MediaSpotlight from '@/components/blocks/MediaSpotlight.vue'
 import TeamCard from '@/components/blocks/TeamCard.vue'
 import MilestoneBanner from '@/components/blocks/MilestoneBanner.vue'
@@ -48,6 +49,7 @@ const previews: Record<string, { component: Component; props: Record<string, unk
   },
   links: { component: LinksGrid, props: { links: sample.components.links } },
   media: { component: MediaSpotlight, props: { media: sample.components.media } },
+  recordings: { component: RecordingsList, props: { recordings: sample.components.recordings } },
   team: {
     component: TeamCard,
     props: {

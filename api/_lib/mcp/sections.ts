@@ -40,6 +40,12 @@ export const SECTIONS = {
     shape: '{ customerName, industry, title, description, url (https link to a PDF or a real customer story page) }',
     page: 'Customer success stories page',
   },
+  recordings: {
+    where: 'components',
+    idPrefix: 'rec',
+    shape: '{ title, date (YYYY-MM-DD), description (may be empty), url (https link to the call in Gong) }',
+    page: 'Home: call recordings (shown instead of the featured video when the room has no video)',
+  },
   team: {
     where: 'room',
     idPrefix: 'tm',

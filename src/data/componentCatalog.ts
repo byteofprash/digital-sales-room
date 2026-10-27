@@ -59,6 +59,20 @@ export const componentCatalog: CatalogEntry[] = [
     previewWidth: 'half',
   },
   {
+    id: 'recordings',
+    name: 'Call recordings',
+    summary: 'Gong recordings of your calls with the prospect. It takes the place of the featured video when a room has no video.',
+    whatItShows: [
+      'One card per Gong call: title, date and an optional note on what was covered',
+      'Each card opens the call in Gong; newest first',
+      'Shown only when the room has no featured video',
+    ],
+    visibility: 'prospect',
+    editableInRoom: true,
+    apiFields: ['components.recordings'],
+    previewWidth: 'half',
+  },
+  {
     id: 'team',
     name: 'Team card',
     summary: 'Who the prospect is working with at Talon.One, and how to reach them.',

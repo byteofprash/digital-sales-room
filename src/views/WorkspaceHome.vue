@@ -4,6 +4,7 @@ import { nextSteps } from '@/lib/nextSteps'
 import RoomShell from '@/components/layout/RoomShell.vue'
 import WelcomeHeroBanner from '@/components/blocks/WelcomeHeroBanner.vue'
 import LinksGrid from '@/components/blocks/LinksGrid.vue'
+import RecordingsList from '@/components/blocks/RecordingsList.vue'
 import MediaSpotlight from '@/components/blocks/MediaSpotlight.vue'
 import TeamCard from '@/components/blocks/TeamCard.vue'
 import MilestoneBanner from '@/components/blocks/MilestoneBanner.vue'
@@ -30,7 +31,9 @@ const session = useSessionStore()
         class="mb-6 grid grid-cols-2 gap-4.5"
         :class="nextSteps(ws.components.timeline).length ? '@3xl:grid-cols-[1.15fr_1fr_1fr]' : ''"
       >
-        <MediaSpotlight :media="ws.components.media" />
+        <!-- No featured video? Show the Gong call recordings in its place. -->
+        <MediaSpotlight v-if="ws.components.media.videoUrl" :media="ws.components.media" />
+        <RecordingsList v-else :recordings="ws.components.recordings" />
         <TeamCard
           :team="ws.team"
           :book-meeting-url="ws.bookMeetingUrl"

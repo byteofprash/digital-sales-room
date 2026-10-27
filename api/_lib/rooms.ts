@@ -92,6 +92,7 @@ export function emptyContent(): Pick<RoomContent, 'team' | 'milestones' | 'compo
       timeline: [],
       architecture: [],
       stories: [],
+      recordings: [],
     },
   }
 }
