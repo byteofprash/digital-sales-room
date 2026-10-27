@@ -96,12 +96,14 @@ back as `{ "error": string, "details"?: string[] }`.
 rooms to everyone but the owner (rooms that predate `status` count as published), and the client
 can no longer change `status` directly, so these endpoints are the only way to flip it.
 
-**Trying it without SSO:** set `DEV_AUTH_BYPASS=true` and call the API with
-`Authorization: Bearer dev:test.ae` — that authenticates as `test.ae@talon.one` (any `dev:<name>`
-works, and `dev:test@abc.com` authenticates as exactly `test@abc.com`; handy for checking that two AEs can't see each other's rooms). It's ignored on Vercel
-production. To also skip the service account, run the Firestore emulator
-(`firebase emulators:start --only firestore`) and set `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`;
-otherwise the three `FIREBASE_*` variables below are still needed for storage.
+**Auth is currently switched off.** With `DEV_AUTH_BYPASS=true` (set on Vercel for every
+environment, production included) the API accepts any request with no token and every caller can see
+and edit all rooms. An optional `Authorization: Bearer dev:<name>[@<domain>]` header only chooses the
+owner stamped on new rooms (default `dev@talon.one`). **Anyone who can reach the URL can create,
+edit and publish rooms**, so remove the variable before real prospects or data are involved; real
+`@talon.one` Firebase sign-in is enforced again as soon as it's gone. To skip the service account too
+locally, run the Firestore emulator (`firebase emulators:start --only firestore`) with
+`FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`.
 
 **Setup:** add a Firebase service account (Project settings → Service accounts → Generate new
 private key) as the non-public env vars `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` and

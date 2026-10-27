@@ -7,20 +7,24 @@ const ALLOWED_EMAIL_DOMAIN = 'talon.one'
 export interface Ae {
   uid: string
   email: string
+  /** True only in bypass mode: the caller may see and change every room, not just their own. */
+  seeAll?: boolean
 }
 
 /**
- * Local/preview stand-in for Google SSO: with DEV_AUTH_BYPASS=true, the token
- * `dev:<name>` authenticates as `<name>@talon.one` (e.g. `dev:test.ae`), and
- * `dev:<name>@<domain>` as that exact address (e.g. `dev:test@abc.com`). Never
- * honoured on Vercel production, even if the flag is set there by mistake.
+ * Temporary "no auth" mode while the product is being built: with
+ * DEV_AUTH_BYPASS=true every request is accepted, no token needed, and can
+ * see and edit ALL rooms. A `Bearer dev:<name>[@<domain>]` token only picks the
+ * identity that new rooms are stamped with (default dev@talon.one). This
+ * applies on every environment, production included — remove the variable to
+ * turn real authentication back on.
  */
-function devAe(token: string): Ae | null {
-  if (process.env.DEV_AUTH_BYPASS !== 'true' || process.env.VERCEL_ENV === 'production') return null
+function bypassAe(req: VercelRequest): Ae | null {
+  if (process.env.DEV_AUTH_BYPASS !== 'true') return null
+  const token = /^Bearer (.+)$/.exec(req.headers.authorization ?? '')?.[1] ?? ''
   const match = /^dev:([a-z0-9.]{1,40})(?:@([a-z0-9.-]{1,60}))?$/.exec(token)
-  if (!match) return null
-  const [, name, domain = ALLOWED_EMAIL_DOMAIN] = match
-  return { uid: `dev-${name}@${domain}`, email: `${name}@${domain}` }
+  const [, name = 'dev', domain = ALLOWED_EMAIL_DOMAIN] = match ?? []
+  return { uid: `dev-${name}@${domain}`, email: `${name}@${domain}`, seeAll: true }
 }
 
 /**
@@ -29,11 +33,11 @@ function devAe(token: string): Ae | null {
  * same rule firestore.rules applies to client-side writes.
  */
 export async function requireAe(req: VercelRequest): Promise<Ae> {
+  const bypass = bypassAe(req)
+  if (bypass) return bypass
+
   const match = /^Bearer (.+)$/.exec(req.headers.authorization ?? '')
   if (!match) throw new HttpError(401, 'Missing bearer token')
-
-  const dev = devAe(match[1])
-  if (dev) return dev
 
   let decoded
   try {

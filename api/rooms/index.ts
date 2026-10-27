@@ -34,7 +34,8 @@ export default route({
 
     // Single-field filter only (no composite index needed); AEs own few
     // enough rooms that filtering and sorting in memory is fine.
-    const snap = await getAdminDb().collection('rooms').where('ownerUid', '==', ae.uid).get()
+    const allRooms = getAdminDb().collection('rooms')
+    const snap = await (ae.seeAll ? allRooms : allRooms.where('ownerUid', '==', ae.uid)).get()
     const rooms = snap.docs
       .map((doc) => toRoomResponse(doc.data()))
       .filter((room) => !status || room.status === status)
