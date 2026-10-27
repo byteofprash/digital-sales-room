@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import {
   DocumentTextIcon,
   CodeBracketIcon,
@@ -11,7 +12,13 @@ import type { DocumentEntry, DocumentFileType } from '@/data/types'
 import { useEditModeStore } from '@/stores/editMode'
 import EditDocumentsDialog from '@/components/dialogs/EditDocumentsDialog.vue'
 
-defineProps<{ documents: DocumentEntry[] }>()
+withDefaults(defineProps<{ documents: DocumentEntry[]; showViewAll?: boolean }>(), {
+  showViewAll: true,
+})
+
+const route = useRoute()
+// Absolute, with the room slug: a relative `documents` resolves to /room/documents.
+const documentsPath = computed(() => `/room/${String(route.params.slug)}/documents`)
 
 const editMode = useEditModeStore()
 const dialogOpen = ref(false)
@@ -45,8 +52,8 @@ const fileTypeIcons: Record<DocumentFileType, typeof DocumentTextIcon> = {
         Edit documents
       </button>
       <RouterLink
-        v-else
-        to="documents"
+        v-else-if="showViewAll"
+        :to="documentsPath"
         class="rounded-full border border-t1-black/25 px-3.5 py-1.5 text-xs font-normal text-t1-black hover:border-t1-black"
       >
         View all →

@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import RoomShell from '@/components/layout/RoomShell.vue'
 import ResourceLinksSection from '@/components/sections/ResourceLinksSection.vue'
 import TimelineSection from '@/components/sections/TimelineSection.vue'
+import DocumentsList from '@/components/blocks/DocumentsList.vue'
 import StoriesSection from '@/components/sections/StoriesSection.vue'
 import ComingSoonView from '@/views/ComingSoonView.vue'
 
@@ -12,6 +13,7 @@ const sectionLabels: Record<string, string> = {
   timeline: 'Joint Project Timeline',
   architecture: 'Architecture',
   stories: 'Customer Success Stories',
+  documents: 'Documents',
 }
 
 const route = useRoute()
@@ -44,6 +46,11 @@ const label = computed(() => sectionLabels[section.value] ?? 'Coming soon')
         :items="ws.components.architecture"
       />
       <StoriesSection v-else-if="section === 'stories'" :stories="ws.components.stories" />
+      <DocumentsList
+        v-else-if="section === 'documents'"
+        :documents="ws.components.documents"
+        :show-view-all="false"
+      />
       <ComingSoonView v-else />
     </template>
   </RoomShell>
