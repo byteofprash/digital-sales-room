@@ -3,6 +3,7 @@ import type { EngagementEvent, Workspace } from './types'
 import { seedFixtures } from './fixtures'
 import { auth, db } from '@/lib/firebase'
 import type { WorkspaceRepository } from './workspaceRepository'
+import { withDefaults } from './defaults'
 
 type PublicFields = Omit<Workspace, 'components'> & {
   components: Omit<Workspace['components'], 'engagement'>
@@ -52,11 +53,11 @@ async function readWorkspace(slug: string): Promise<Workspace | null> {
       ?.events ?? []
   }
 
-  return {
+  return withDefaults({
     ...data,
     status: data.status ?? 'published',
     components: { ...data.components, engagement: engagementEvents },
-  }
+  })
 }
 
 async function seedRoom(slug: string, template: Workspace): Promise<Workspace> {

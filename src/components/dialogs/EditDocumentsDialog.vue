@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { cloneRaw } from '@/lib/clone'
 import { ref, watch } from 'vue'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
@@ -23,7 +24,7 @@ const fileTypeOptions: { value: DocumentFileType; label: string }[] = [
 watch(
   () => props.open,
   (isOpen) => {
-    if (isOpen) draft.value = structuredClone(props.documents)
+    if (isOpen) draft.value = cloneRaw(props.documents)
   },
 )
 

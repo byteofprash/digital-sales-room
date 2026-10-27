@@ -2,11 +2,7 @@
 import { computed, ref, type Component } from 'vue'
 import { LockClosedIcon, PencilSquareIcon, EyeIcon } from '@heroicons/vue/24/outline'
 import { acmeCorpWorkspace as sample } from '@/data/fixtures/acme-corp'
-import {
-  componentCatalog,
-  roadmapSections,
-  type CatalogEntry,
-} from '@/data/componentCatalog'
+import { componentCatalog, type CatalogEntry } from '@/data/componentCatalog'
 import WelcomeHeroBanner from '@/components/blocks/WelcomeHeroBanner.vue'
 import LinksGrid from '@/components/blocks/LinksGrid.vue'
 import MediaSpotlight from '@/components/blocks/MediaSpotlight.vue'
@@ -15,6 +11,9 @@ import MilestoneBanner from '@/components/blocks/MilestoneBanner.vue'
 import DocumentsList from '@/components/blocks/DocumentsList.vue'
 import EngagementSignalsFeed from '@/components/blocks/EngagementSignalsFeed.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
+import ResourceLinksSection from '@/components/sections/ResourceLinksSection.vue'
+import TimelineSection from '@/components/sections/TimelineSection.vue'
+import StoriesSection from '@/components/sections/StoriesSection.vue'
 
 type Filter = 'all' | 'prospect' | 'internal' | 'editable'
 
@@ -66,6 +65,31 @@ const previews: Record<string, { component: Component; props: Record<string, unk
       milestones: sample.milestones,
     },
   },
+  requirements: {
+    component: ResourceLinksSection,
+    props: {
+      field: 'requirements',
+      title: 'Requirements',
+      intro: 'The use cases and requirements for this project, gathered in one document.',
+      emptyText: '',
+      items: sample.components.requirements,
+    },
+  },
+  timeline: {
+    component: TimelineSection,
+    props: { steps: sample.components.timeline, prospectName: sample.prospectName },
+  },
+  architecture: {
+    component: ResourceLinksSection,
+    props: {
+      field: 'architecture',
+      title: 'Architecture',
+      intro: 'How Talon.One fits into your stack: diagrams and integration detail.',
+      emptyText: '',
+      items: sample.components.architecture,
+    },
+  },
+  stories: { component: StoriesSection, props: { stories: sample.components.stories } },
   engagement: {
     component: EngagementSignalsFeed,
     props: { events: sample.components.engagement },
@@ -135,6 +159,12 @@ function frameClass(entry: CatalogEntry) {
             <EyeIcon class="h-2.5 w-2.5" /> Prospect-facing
           </span>
           <span
+            v-if="entry.page"
+            class="flex items-center gap-1 rounded-full border border-t1-black/25 px-2.5 py-0.5 text-[10px] font-medium tracking-[0.12em] text-t1-black uppercase"
+          >
+            Full page
+          </span>
+          <span
             v-if="entry.editableInRoom"
             class="flex items-center gap-1 rounded-full border border-t1-black/25 px-2.5 py-0.5 text-[10px] font-medium tracking-[0.12em] text-t1-black uppercase"
           >
@@ -192,23 +222,6 @@ function frameClass(entry: CatalogEntry) {
       <div v-if="!visible.length" class="py-16 text-center text-sm text-t1-black/60">
         No components match this filter.
       </div>
-
-      <section class="mt-10">
-        <h2 class="text-lg font-normal tracking-tight text-t1-black">Coming soon</h2>
-        <p class="mb-3 text-sm font-light text-t1-black/65">
-          These sections show in the room's navigation but aren't built yet.
-        </p>
-        <div class="grid gap-2.5 sm:grid-cols-2">
-          <div
-            v-for="section in roadmapSections"
-            :key="section.name"
-            class="rounded-t1 border border-dashed border-t1-black/25 p-3.5"
-          >
-            <div class="text-[13px] font-normal text-t1-black">{{ section.name }}</div>
-            <div class="mt-0.5 text-[11px] font-light text-t1-black/65">{{ section.note }}</div>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 </template>

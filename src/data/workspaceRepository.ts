@@ -1,4 +1,5 @@
 import type { Workspace } from './types'
+import { withDefaults } from './defaults'
 import { seedFixtures } from './fixtures'
 import { firebaseEnabled } from '@/lib/firebase'
 import { firestoreWorkspaceRepository } from './firestoreWorkspaceRepository'
@@ -35,12 +36,13 @@ function saveToStorage(slug: string, workspace: Workspace) {
  */
 export const mockWorkspaceRepository: WorkspaceRepository = {
   async getWorkspace(slug) {
-    return loadFromStorage(slug) ?? seedFixtures[slug] ?? null
+    const found = loadFromStorage(slug) ?? seedFixtures[slug]
+    return found ? withDefaults(found) : null
   },
   async updateWorkspace(slug, updater) {
     const current = loadFromStorage(slug) ?? seedFixtures[slug]
     if (!current) throw new Error(`Workspace not found: ${slug}`)
-    const next = updater(structuredClone(current))
+    const next = updater(withDefaults(structuredClone(current)))
     saveToStorage(slug, next)
     return next
   },

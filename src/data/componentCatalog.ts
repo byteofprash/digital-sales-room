@@ -14,6 +14,8 @@ export interface CatalogEntry {
   apiFields: string[]
   /** 'half' blocks sit side by side on the Home page, so they preview at half width */
   previewWidth: 'full' | 'half'
+  /** True for components that are a whole page in the room (reached from the sidebar) rather than a block on Home */
+  page?: boolean
 }
 
 export const componentCatalog: CatalogEntry[] = [
@@ -109,6 +111,62 @@ export const componentCatalog: CatalogEntry[] = [
     previewWidth: 'half',
   },
   {
+    id: 'requirements',
+    name: 'Requirements',
+    summary: 'A page that points the buying committee to the requirements document for the deal.',
+    whatItShows: [
+      'One or more links, each with a title and short description',
+      'Each link opens a PDF, a Google Doc or any web page, and is labelled with its type',
+    ],
+    visibility: 'prospect',
+    editableInRoom: true,
+    apiFields: ['components.requirements'],
+    previewWidth: 'full',
+    page: true,
+  },
+  {
+    id: 'timeline',
+    name: 'Joint project timeline',
+    summary: 'A shared plan of the next steps, who owns each one and when it is due.',
+    whatItShows: [
+      'Steps in date order, each marked done, in progress or upcoming',
+      'Owner for each step: Talon.One, the prospect or joint, plus the owner name',
+    ],
+    visibility: 'prospect',
+    editableInRoom: true,
+    apiFields: ['components.timeline'],
+    previewWidth: 'full',
+    page: true,
+  },
+  {
+    id: 'architecture',
+    name: 'Architecture',
+    summary: 'A page that links to the technical architecture and integration documents.',
+    whatItShows: [
+      'Links to diagrams and integration specs, each with a title and short description',
+      'Each link opens a PDF, a Google Doc or any web page, and is labelled with its type',
+    ],
+    visibility: 'prospect',
+    editableInRoom: true,
+    apiFields: ['components.architecture'],
+    previewWidth: 'full',
+    page: true,
+  },
+  {
+    id: 'stories',
+    name: 'Customer success stories',
+    summary: 'Reference stories from real customers, picked to match the prospect.',
+    whatItShows: [
+      'A card per story: customer, industry, title and a short summary',
+      'Each card opens a PDF or the customer story page',
+    ],
+    visibility: 'prospect',
+    editableInRoom: true,
+    apiFields: ['components.stories'],
+    previewWidth: 'full',
+    page: true,
+  },
+  {
     id: 'engagement',
     name: 'Buyer intent signals',
     summary: 'Who opened what, and for how long. Only the AE ever sees this; prospects never do.',
@@ -121,12 +179,4 @@ export const componentCatalog: CatalogEntry[] = [
     apiFields: [],
     previewWidth: 'full',
   },
-]
-
-/** Sections that appear in the room's navigation but aren't built yet. */
-export const roadmapSections = [
-  { name: 'Requirements', note: 'Where the buying committee adds and tracks use cases' },
-  { name: 'Joint project timeline', note: 'A shared plan with owners and dates' },
-  { name: 'Architecture', note: 'Technical diagrams and integration detail' },
-  { name: 'Customer success stories', note: 'Reference stories relevant to the prospect' },
 ]

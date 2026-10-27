@@ -1,4 +1,7 @@
 import type {
+  ResourceLink,
+  SuccessStory,
+  TimelineStep,
   DocumentEntry,
   LinkTile,
   MediaSpotlightConfig,
@@ -22,6 +25,10 @@ export interface RoomContent {
     links: LinkTile[]
     media: MediaSpotlightConfig
     documents: DocumentEntry[]
+    requirements: ResourceLink[]
+    timeline: TimelineStep[]
+    architecture: ResourceLink[]
+    stories: SuccessStory[]
   }
 }
 
@@ -48,6 +55,19 @@ class Checker {
     if (typeof v !== 'string' || (!opts.allowEmpty && !v.trim())) {
       this.errors.push(`${path}${key} must be ${opts.allowEmpty ? 'a string' : 'a non-empty string'}`)
     }
+  }
+
+  url(o: Obj, key: string, path: string) {
+    const v = o[key]
+    let ok = false
+    if (typeof v === 'string') {
+      try {
+        ok = ['http:', 'https:'].includes(new URL(v).protocol)
+      } catch {
+        ok = false
+      }
+    }
+    if (!ok) this.errors.push(`${path}${key} must be a full http(s) URL`)
   }
 
   oneOf(o: Obj, key: string, allowed: string[], path: string) {
@@ -102,7 +122,8 @@ const ROOM_KEYS = [
   'targetGoLive',
   'components',
 ]
-const COMPONENT_KEYS = ['hero', 'links', 'media', 'documents']
+const COMPONENT_KEYS = ['hero', 'links', 'media', 'documents', 'requirements', 'timeline', 'architecture', 'stories']
+const OWNER_SIDES = ['talon', 'prospect', 'joint']
 
 /**
  * Validates the editable part of a room. With `partial` (PATCH) every field is
@@ -176,6 +197,34 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
           for (const key of ['videoUrl', 'title', 'presenterName', 'presenterRole', 'postedLabel']) {
             c.str(m, key, mat, { allowEmpty: true })
           }
+        })
+      }
+      for (const field of ['requirements', 'architecture'] as const) {
+        if (comp[field] !== undefined) {
+          c.list(comp[field], `components.${field}`, (r, rat) => {
+            c.str(r, 'title', rat)
+            c.str(r, 'description', rat, { allowEmpty: true })
+            c.url(r, 'url', rat)
+          })
+        }
+      }
+      if (comp.timeline !== undefined) {
+        c.list(comp.timeline, 'components.timeline', (t, tat) => {
+          c.str(t, 'title', tat)
+          c.str(t, 'description', tat, { allowEmpty: true })
+          c.oneOf(t, 'ownerSide', OWNER_SIDES, tat)
+          c.str(t, 'ownerName', tat, { allowEmpty: true })
+          c.date(t, 'dueDate', tat)
+          c.oneOf(t, 'status', MILESTONE_STATUSES, tat)
+        })
+      }
+      if (comp.stories !== undefined) {
+        c.list(comp.stories, 'components.stories', (st, sat) => {
+          c.str(st, 'customerName', sat)
+          c.str(st, 'industry', sat, { allowEmpty: true })
+          c.str(st, 'title', sat)
+          c.str(st, 'description', sat, { allowEmpty: true })
+          c.url(st, 'url', sat)
         })
       }
       if (comp.documents !== undefined) {

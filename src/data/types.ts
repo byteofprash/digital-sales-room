@@ -70,6 +70,37 @@ export interface MediaSpotlightConfig {
   postedLabel: string
 }
 
+/** A document the AE points the buying committee to: a PDF, a Google Doc, or any web page. */
+export interface ResourceLink {
+  id: string
+  title: string
+  description: string
+  /** http(s) URL to a PDF, a Google Doc/Drive file, or a web page */
+  url: string
+}
+
+export type TimelineOwnerSide = 'talon' | 'prospect' | 'joint'
+
+export interface TimelineStep {
+  id: string
+  title: string
+  description: string
+  ownerSide: TimelineOwnerSide
+  ownerName: string
+  dueDate: string // ISO date
+  status: MilestoneStatus
+}
+
+/** A reference story: a PDF or a link to a real customer's story. */
+export interface SuccessStory {
+  id: string
+  customerName: string
+  industry: string
+  title: string
+  description: string
+  url: string
+}
+
 /**
  * Lifecycle of a room. Only `published` rooms are readable by prospects
  * (see firestore.rules); `draft` and `archived` are AE-only. Rooms created
@@ -94,5 +125,9 @@ export interface Workspace {
     media: MediaSpotlightConfig
     documents: DocumentEntry[]
     engagement: EngagementEvent[]
+    requirements: ResourceLink[]
+    timeline: TimelineStep[]
+    architecture: ResourceLink[]
+    stories: SuccessStory[]
   }
 }

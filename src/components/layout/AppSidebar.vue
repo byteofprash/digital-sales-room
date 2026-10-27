@@ -16,8 +16,10 @@ const slug = computed(() => String(route.params.slug))
 
 const navItems = [
   { label: 'Workspace Home', section: null },
-  { label: 'Bauhaus Requirements', section: 'requirements' },
+  { label: 'Requirements', section: 'requirements' },
   { label: 'Joint Project Timeline', section: 'timeline' },
+  { label: 'Architecture', section: 'architecture' },
+  { label: 'Customer Success Stories', section: 'stories' },
 ]
 
 function isActiveSection(section: string | null) {

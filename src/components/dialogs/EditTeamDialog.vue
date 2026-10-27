@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { cloneRaw } from '@/lib/clone'
 import { ref, watch } from 'vue'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
@@ -25,7 +26,7 @@ watch(
   () => props.open,
   (isOpen) => {
     if (isOpen) {
-      draft.value = structuredClone(props.team)
+      draft.value = cloneRaw(props.team)
       bookMeetingUrl.value = workspace.workspace?.bookMeetingUrl ?? ''
       slackChannelUrl.value = workspace.workspace?.slackChannelUrl ?? ''
     }

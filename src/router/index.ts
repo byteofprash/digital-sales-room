@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/room/:slug/:section',
       name: 'workspace-section',
-      component: () => import('@/views/ComingSoonView.vue'),
+      component: () => import('@/views/RoomSectionView.vue'),
     },
   ],
 })

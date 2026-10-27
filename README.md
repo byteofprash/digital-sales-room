@@ -75,6 +75,22 @@ The one seeded fixture (`acme-corp`) self-creates in Firestore, owned by whichev
 account first visits `/room/acme-corp` while signed in — there's no separate "create room" step
 yet (see deferred AE portal below).
 
+## Room sections
+
+Besides the Home page, each room has four pages reached from the sidebar. All are plain data on the
+room document (`components.*`), edited in Edit mode and settable through `PATCH /api/rooms/:slug`:
+
+| Page | Route | Holds |
+| --- | --- | --- |
+| Requirements | `/room/:slug/requirements` | Links to a PDF, Google Doc or web page (`components.requirements`) |
+| Joint project timeline | `/room/:slug/timeline` | Steps with owner, due date and status (`components.timeline`) |
+| Architecture | `/room/:slug/architecture` | Links to a PDF, Google Doc or web page (`components.architecture`) |
+| Customer success stories | `/room/:slug/stories` | Links to a PDF or a real customer's story page (`components.stories`) |
+
+Links must be full `http(s)` URLs; the type label (PDF, Google Doc, …) is worked out from the URL.
+There's no file upload, so a PDF has to be hosted somewhere the buying committee can open it, and
+Google Docs need link sharing turned on. The `/components` page lists every component, including these.
+
 ## Room management API
 
 Serverless endpoints (Vercel functions in `api/`, using `firebase-admin`) for the AE side of a room's
@@ -154,6 +170,6 @@ src/
   tokens never reach the browser).
 - Real engagement/analytics pipeline feeding the internal-only Buyer Intent Signals feed (currently
   seeded fixture data in `rooms/{slug}/private/engagement`).
-- AE portal UI on top of the room management API (the endpoints exist; no screens call them yet), and the rest of the nav (Requirements, Timeline,
+- AE portal UI on top of the room management API (the endpoints exist; no screens call them yet) (Requirements, Timeline,
   Architecture, etc. — currently stubbed as "coming soon"). Today only the one seeded fixture can
   self-create in Firestore.

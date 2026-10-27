@@ -88,6 +88,10 @@ export function emptyContent(): Pick<RoomContent, 'team' | 'milestones' | 'compo
       links: [],
       media: { videoUrl: '', title: '', presenterName: '', presenterRole: '', postedLabel: '' },
       documents: [],
+      requirements: [],
+      timeline: [],
+      architecture: [],
+      stories: [],
     },
   }
 }

@@ -102,6 +102,71 @@ export const acmeCorpWorkspace: Workspace = {
         actionLabel: 'Watch',
       },
     ],
+    // Sample links: point these at the real documents for each deal.
+    requirements: [
+      {
+        id: 'req-1',
+        title: 'Acme Corp requirements',
+        description: 'Use cases and success criteria agreed in the discovery workshop.',
+        url: 'https://docs.google.com/document/d/sample-acme-requirements/edit',
+      },
+    ],
+    timeline: [
+      {
+        id: 'tl-1',
+        title: 'Discovery workshop',
+        description: 'Agree goals, success metrics and the use cases in scope.',
+        ownerSide: 'joint',
+        ownerName: 'Stefan Weber & Lisa Wong',
+        dueDate: '2026-05-15',
+        status: 'done',
+      },
+      {
+        id: 'tl-2',
+        title: 'Technical deep-dive',
+        description: 'Walk through the integration architecture with the Acme platform team.',
+        ownerSide: 'talon',
+        ownerName: 'Prash Swaminathan',
+        dueDate: '2026-06-20',
+        status: 'active',
+      },
+      {
+        id: 'tl-3',
+        title: 'Security & compliance review',
+        description: 'Acme security reviews the SOC 2 report and the data processing agreement.',
+        ownerSide: 'prospect',
+        ownerName: 'James Mitchell',
+        dueDate: '2026-07-03',
+        status: 'upcoming',
+      },
+      {
+        id: 'tl-4',
+        title: 'Business case sign-off',
+        description: 'Finalise the ROI model and align on commercials.',
+        ownerSide: 'joint',
+        ownerName: 'Benedikt Zimmermann & Lisa Wong',
+        dueDate: '2026-07-31',
+        status: 'upcoming',
+      },
+    ],
+    architecture: [
+      {
+        id: 'arch-1',
+        title: 'Integration architecture',
+        description: 'How Talon.One connects to the Acme storefront, CRM and data platform.',
+        url: 'https://example.com/acme-integration-architecture.pdf',
+      },
+    ],
+    stories: [
+      {
+        id: 'story-1',
+        customerName: 'Sample customer',
+        industry: 'Retail',
+        title: 'Replace with a real customer story',
+        description: 'Link a PDF or the customer story page that is most relevant to this prospect.',
+        url: 'https://www.talon.one/customers',
+      },
+    ],
     engagement: [
       {
         id: 'eng-1',
