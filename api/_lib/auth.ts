@@ -11,13 +11,16 @@ export interface Ae {
 
 /**
  * Local/preview stand-in for Google SSO: with DEV_AUTH_BYPASS=true, the token
- * `dev:<name>` authenticates as `<name>@talon.one` (e.g. `dev:test.ae`). Never
+ * `dev:<name>` authenticates as `<name>@talon.one` (e.g. `dev:test.ae`), and
+ * `dev:<name>@<domain>` as that exact address (e.g. `dev:test@abc.com`). Never
  * honoured on Vercel production, even if the flag is set there by mistake.
  */
 function devAe(token: string): Ae | null {
   if (process.env.DEV_AUTH_BYPASS !== 'true' || process.env.VERCEL_ENV === 'production') return null
-  const match = /^dev:([a-z0-9.]{1,40})$/.exec(token)
-  return match ? { uid: `dev-${match[1]}`, email: `${match[1]}@${ALLOWED_EMAIL_DOMAIN}` } : null
+  const match = /^dev:([a-z0-9.]{1,40})(?:@([a-z0-9.-]{1,60}))?$/.exec(token)
+  if (!match) return null
+  const [, name, domain = ALLOWED_EMAIL_DOMAIN] = match
+  return { uid: `dev-${name}@${domain}`, email: `${name}@${domain}` }
 }
 
 /**

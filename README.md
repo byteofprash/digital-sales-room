@@ -98,7 +98,7 @@ can no longer change `status` directly, so these endpoints are the only way to f
 
 **Trying it without SSO:** set `DEV_AUTH_BYPASS=true` and call the API with
 `Authorization: Bearer dev:test.ae` — that authenticates as `test.ae@talon.one` (any `dev:<name>`
-works, handy for checking that two AEs can't see each other's rooms). It's ignored on Vercel
+works, and `dev:test@abc.com` authenticates as exactly `test@abc.com`; handy for checking that two AEs can't see each other's rooms). It's ignored on Vercel
 production. To also skip the service account, run the Firestore emulator
 (`firebase emulators:start --only firestore`) and set `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`;
 otherwise the three `FIREBASE_*` variables below are still needed for storage.
