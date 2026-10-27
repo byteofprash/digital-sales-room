@@ -70,9 +70,17 @@ export interface MediaSpotlightConfig {
   postedLabel: string
 }
 
+/**
+ * Lifecycle of a room. Only `published` rooms are readable by prospects
+ * (see firestore.rules); `draft` and `archived` are AE-only. Rooms created
+ * before this field existed are treated as `published`.
+ */
+export type RoomStatus = 'draft' | 'published' | 'archived'
+
 export interface Workspace {
   id: string
   slug: string
+  status: RoomStatus
   prospectName: string
   aeFirstName: string
   team: TeamMember[]

@@ -15,15 +15,24 @@ service cloud.firestore {
     // so nobody can enumerate other prospects' rooms. Only the owning AE can
     // write, and only a talon.one account can ever become an owner.
     match /rooms/{slug} {
-      allow get: if true;
+      // Only published rooms are visible to prospects; drafts and archived
+      // rooms are readable by their owner alone. Rooms created before
+      // `status` existed count as published.
+      allow get: if resource.data.get('status', 'published') == 'published'
+        || (isTalonOneAe() && resource.data.ownerUid == request.auth.uid);
       allow list: if false;
 
       allow create: if isTalonOneAe()
         && request.resource.data.ownerUid == request.auth.uid;
 
+      // Status changes (draft / published / archived) go through the
+      // server-side API, which enforces the allowed transitions; the client
+      // may edit content but never flip the status itself.
       allow update: if isTalonOneAe()
         && resource.data.ownerUid == request.auth.uid
-        && request.resource.data.ownerUid == resource.data.ownerUid;
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.get('status', 'published')
+          == resource.data.get('status', 'published');
 
       allow delete: if false;
 

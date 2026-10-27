@@ -27,7 +27,15 @@ function isOwner(ownerUid: string | undefined) {
 }
 
 async function readWorkspace(slug: string): Promise<Workspace | null> {
-  const snap = await getDoc(roomRef(slug))
+  let snap
+  try {
+    snap = await getDoc(roomRef(slug))
+  } catch (error) {
+    // Draft/archived rooms are denied to everyone but their owner; to a
+    // prospect that is indistinguishable from the room not existing.
+    if ((error as { code?: string }).code === 'permission-denied') return null
+    throw error
+  }
 
   if (!snap.exists()) {
     const template = seedFixtures[slug]
@@ -46,6 +54,7 @@ async function readWorkspace(slug: string): Promise<Workspace | null> {
 
   return {
     ...data,
+    status: data.status ?? 'published',
     components: { ...data.components, engagement: engagementEvents },
   }
 }
