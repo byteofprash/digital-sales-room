@@ -1,7 +1,7 @@
 import { FieldValue, type DocumentData, type Timestamp } from 'firebase-admin/firestore'
 import type { RoomStatus, Workspace } from '../../src/data/types.js'
 import type { Ae } from './auth.js'
-import { adminDb } from './firebaseAdmin.js'
+import { getAdminDb } from './firebaseAdmin.js'
 import { HttpError } from './http.js'
 import type { RoomContent } from './validation.js'
 
@@ -22,7 +22,7 @@ const TRANSITIONS: Record<RoomStatus, RoomStatus[]> = {
 export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/
 const SLUG_MAX_LENGTH = 60
 
-export const roomRef = (slug: string) => adminDb.collection('rooms').doc(slug)
+export const roomRef = (slug: string) => getAdminDb().collection('rooms').doc(slug)
 const engagementRef = (slug: string) => roomRef(slug).collection('private').doc('engagement')
 
 export function slugify(name: string): string {
@@ -116,7 +116,7 @@ export async function createDraftRoom(
     updatedAt: FieldValue.serverTimestamp(),
   }
 
-  const batch = adminDb.batch()
+  const batch = getAdminDb().batch()
   batch.create(roomRef(slug), room)
   batch.set(engagementRef(slug), { events: [] })
   try {
