@@ -51,6 +51,12 @@ const avatarInitials = computed(() => {
     </template>
 
     <template v-else>
+      <RouterLink
+        to="/components"
+        class="text-[11px] font-normal text-t1-black/70 hover:text-t1-black"
+      >
+        Components
+      </RouterLink>
       <button
         class="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-normal transition-colors"
         :class="
