@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { cloneRaw } from '@/lib/clone'
 import { ref, watch } from 'vue'
+import { isHttpUrl } from '@/lib/linkKind'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue'
 import { PlusIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import type { DocumentEntry, DocumentFileType } from '@/data/types'
@@ -12,6 +13,7 @@ const emit = defineEmits<{ 'update:open': [boolean] }>()
 
 const workspace = useWorkspaceStore()
 const draft = ref<DocumentEntry[]>([])
+const error = ref('')
 
 const fileTypeOptions: { value: DocumentFileType; label: string }[] = [
   { value: 'pdf', label: 'PDF' },
@@ -24,7 +26,10 @@ const fileTypeOptions: { value: DocumentFileType; label: string }[] = [
 watch(
   () => props.open,
   (isOpen) => {
-    if (isOpen) draft.value = cloneRaw(props.documents)
+    if (isOpen) {
+      draft.value = cloneRaw(props.documents)
+      error.value = ''
+    }
   },
 )
 
@@ -36,6 +41,7 @@ function addDocument() {
     category: '',
     fileType: 'other',
     actionLabel: 'View',
+    href: '',
   })
 }
 
@@ -44,8 +50,14 @@ function removeDocument(id: string) {
 }
 
 async function save() {
+  // A link is optional, but a typo'd one would lead the prospect nowhere.
+  if (draft.value.some((doc) => doc.href?.trim() && !isHttpUrl(doc.href.trim()))) {
+    error.value = 'Links must be full URLs starting with https://'
+    return
+  }
+  const cleaned = draft.value.map((doc) => ({ ...doc, href: doc.href?.trim() ?? '' }))
   await workspace.updateComponent((ws) => {
-    ws.components.documents = draft.value
+    ws.components.documents = cleaned
     return ws
   })
   emit('update:open', false)
@@ -117,6 +129,12 @@ async function save() {
             class="w-20 rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
           />
         </div>
+        <input
+          v-model="doc.href"
+          type="url"
+          placeholder="Link to the file: https://docs.google.com/… or https://…/file.pdf"
+          class="rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
+        />
       </div>
 
       <button
@@ -127,6 +145,8 @@ async function save() {
         <PlusIcon class="h-3.5 w-3.5" />
         Add document
       </button>
+
+      <p v-if="error" class="text-xs font-normal text-t1-danger">{{ error }}</p>
     </div>
   </EditDialog>
 </template>

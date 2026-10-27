@@ -72,11 +72,22 @@ const fileTypeIcons: Record<DocumentFileType, typeof DocumentTextIcon> = {
         <div class="flex-1 text-sm font-normal text-t1-black">{{ doc.displayName }}</div>
         <div class="flex shrink-0 items-center gap-3">
           <span class="text-[11px] font-light text-t1-black/65">{{ doc.category }}</span>
-          <button
+          <a
+            v-if="doc.href"
+            :href="doc.href"
+            target="_blank"
+            rel="noopener noreferrer"
             class="rounded-full border border-t1-black/25 px-3 py-1.5 text-[11px] font-normal text-t1-black hover:border-t1-black hover:bg-t1-black hover:text-white"
           >
             {{ doc.actionLabel }} →
-          </button>
+          </a>
+          <span
+            v-else
+            title="No file has been linked yet"
+            class="cursor-not-allowed rounded-full border border-t1-black/15 px-3 py-1.5 text-[11px] font-normal text-t1-black/35"
+          >
+            {{ doc.actionLabel }} →
+          </span>
         </div>
       </div>
     </div>

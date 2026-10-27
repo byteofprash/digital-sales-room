@@ -236,7 +236,8 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
           c.str(d, 'category', dat, { allowEmpty: true })
           c.oneOf(d, 'fileType', FILE_TYPES, dat)
           c.str(d, 'actionLabel', dat, { allowEmpty: true })
-          c.str(d, 'href', dat, { optional: true })
+          c.str(d, 'href', dat, { optional: true, allowEmpty: true })
+          if (typeof d.href === 'string' && d.href.trim()) c.url(d, 'href', dat)
         })
       }
     })
