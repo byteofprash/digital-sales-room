@@ -9,6 +9,10 @@ function initAdminApp() {
   const projectId = process.env.FIREBASE_PROJECT_ID
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  // Against the Firestore emulator no credentials are needed (pair with DEV_AUTH_BYPASS).
+  if (process.env.FIRESTORE_EMULATOR_HOST) {
+    return initializeApp({ projectId: projectId ?? 'demo-digital-sales-room' })
+  }
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error(
       'FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY must be set',
