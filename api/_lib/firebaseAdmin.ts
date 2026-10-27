@@ -21,7 +21,9 @@ function initAdminApp() {
   return initializeApp({ credential: cert({ projectId, clientEmail, privateKey }) })
 }
 
-const app = getApps()[0] ?? initAdminApp()
+// Initialised on first use, not at import time, so a bad credential surfaces
+// as a logged 500 from the route wrapper instead of a function crash.
+const getApp = () => getApps()[0] ?? initAdminApp()
 
-export const adminAuth = getAuth(app)
-export const adminDb = getFirestore(app)
+export const getAdminAuth = () => getAuth(getApp())
+export const getAdminDb = () => getFirestore(getApp())

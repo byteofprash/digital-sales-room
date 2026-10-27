@@ -1,5 +1,5 @@
 import type { VercelRequest } from '@vercel/node'
-import { adminAuth } from './firebaseAdmin.js'
+import { getAdminAuth } from './firebaseAdmin.js'
 import { HttpError } from './http.js'
 
 const ALLOWED_EMAIL_DOMAIN = 'talon.one'
@@ -37,7 +37,7 @@ export async function requireAe(req: VercelRequest): Promise<Ae> {
 
   let decoded
   try {
-    decoded = await adminAuth.verifyIdToken(match[1])
+    decoded = await getAdminAuth().verifyIdToken(match[1])
   } catch {
     throw new HttpError(401, 'Invalid or expired token')
   }

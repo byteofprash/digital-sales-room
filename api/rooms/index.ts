@@ -8,7 +8,7 @@ import {
   slugify,
   toRoomResponse,
 } from '../_lib/rooms.js'
-import { adminDb } from '../_lib/firebaseAdmin.js'
+import { getAdminDb } from '../_lib/firebaseAdmin.js'
 import { validateRoomContent, type RoomContent } from '../_lib/validation.js'
 import type { RoomStatus } from '../../src/data/types.js'
 
@@ -34,7 +34,7 @@ export default route({
 
     // Single-field filter only (no composite index needed); AEs own few
     // enough rooms that filtering and sorting in memory is fine.
-    const snap = await adminDb.collection('rooms').where('ownerUid', '==', ae.uid).get()
+    const snap = await getAdminDb().collection('rooms').where('ownerUid', '==', ae.uid).get()
     const rooms = snap.docs
       .map((doc) => toRoomResponse(doc.data()))
       .filter((room) => !status || room.status === status)
