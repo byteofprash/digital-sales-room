@@ -127,6 +127,11 @@ private key) as the non-public env vars `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_
 excludes `/api/*` from the SPA rewrite. Locally, run `vercel dev` (plain `npm run dev` serves only
 the front end).
 
+## Editing rooms with an AI assistant
+
+`mcp/` is an MCP server that lets Claude (or any MCP client) create rooms and edit their contents
+through the room API. See [`mcp/README.md`](mcp/README.md) for the tools and setup.
+
 ## Deploying to Vercel
 
 1. In the Vercel dashboard: **Add New → Project**, import this GitHub repo.
@@ -147,6 +152,7 @@ the front end).
 
 ```
 api/               Vercel serverless endpoints (room create / edit / status) + shared _lib
+mcp/               MCP server (stdio) that drives the room API for AI assistants
 src/
   lib/firebase.ts   Firebase app/Auth/Firestore init; firebaseEnabled flag
   data/
