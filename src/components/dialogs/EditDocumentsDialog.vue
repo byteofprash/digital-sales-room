@@ -58,7 +58,7 @@ async function save() {
     @close="emit('update:open', false)"
     @save="save"
   >
-    <p class="mb-4 text-xs text-t1-ink-3">
+    <p class="mb-4 text-xs text-t1-black/60">
       Curated manually for now — picking straight from Google Drive lands in a later phase.
     </p>
 
@@ -66,18 +66,18 @@ async function save() {
       <div
         v-for="doc in draft"
         :key="doc.id"
-        class="flex flex-col gap-2 rounded-t1-sm border border-t1-line p-3"
+        class="flex flex-col gap-2 rounded-t1 border border-t1-line p-3"
       >
         <div class="flex items-center gap-2">
           <input
             v-model="doc.displayName"
             type="text"
             placeholder="File name"
-            class="flex-1 rounded-md border border-t1-line px-2.5 py-1.5 text-[13px] font-semibold text-t1-navy focus:border-t1-electric focus:outline-none"
+            class="flex-1 rounded-t1 border border-t1-line px-2.5 py-1.5 text-[13px] font-normal text-t1-black focus:border-t1-blue focus:outline-none"
           />
           <button
             type="button"
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-t1-danger hover:bg-t1-danger/8"
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-t1-danger hover:bg-t1-danger/8"
             @click="removeDocument(doc.id)"
           >
             <TrashIcon class="h-4 w-4" />
@@ -86,18 +86,18 @@ async function save() {
         <div class="flex items-center gap-2">
           <Listbox v-model="doc.fileType" as="div" class="relative w-36 shrink-0">
             <ListboxButton
-              class="w-full rounded-md border border-t1-line px-2.5 py-1.5 text-left text-xs text-t1-ink-2 hover:border-t1-ink-2"
+              class="w-full rounded-t1 border border-t1-line px-2.5 py-1.5 text-left text-xs text-t1-black hover:border-t1-black"
             >
               {{ fileTypeOptions.find((o) => o.value === doc.fileType)?.label }}
             </ListboxButton>
             <ListboxOptions
-              class="absolute z-10 mt-1 w-full rounded-md border border-t1-line bg-white py-1 shadow-t1-lifted"
+              class="absolute z-10 mt-1 w-full rounded-t1 border border-t1-line bg-white py-1"
             >
               <ListboxOption
                 v-for="option in fileTypeOptions"
                 :key="option.value"
                 :value="option.value"
-                class="cursor-pointer px-2.5 py-1.5 text-xs text-t1-ink hover:bg-t1-electric/6"
+                class="cursor-pointer px-2.5 py-1.5 text-xs text-t1-black hover:bg-t1-blue/6"
               >
                 {{ option.label }}
               </ListboxOption>
@@ -107,20 +107,20 @@ async function save() {
             v-model="doc.category"
             type="text"
             placeholder="Category, e.g. Security"
-            class="flex-1 rounded-md border border-t1-line px-2.5 py-1.5 text-xs text-t1-ink-2 focus:border-t1-electric focus:outline-none"
+            class="flex-1 rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
           />
           <input
             v-model="doc.actionLabel"
             type="text"
             placeholder="View"
-            class="w-20 rounded-md border border-t1-line px-2.5 py-1.5 text-xs text-t1-ink-2 focus:border-t1-electric focus:outline-none"
+            class="w-20 rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
           />
         </div>
       </div>
 
       <button
         type="button"
-        class="flex items-center justify-center gap-1.5 rounded-md border border-dashed border-t1-line py-2 text-xs font-bold text-t1-ink-2 hover:border-t1-electric hover:text-t1-electric"
+        class="flex items-center justify-center gap-1.5 rounded-t1 border border-dashed border-t1-black/25 py-2 text-xs font-normal text-t1-black hover:border-t1-blue hover:text-t1-blue"
         @click="addDocument"
       >
         <PlusIcon class="h-3.5 w-3.5" />

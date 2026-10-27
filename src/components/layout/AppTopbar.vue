@@ -24,28 +24,26 @@ const avatarInitials = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-13 shrink-0 items-center gap-2 border-b border-t1-line bg-t1-cream px-7">
-    <span class="text-xs text-t1-ink-3">Workspace</span>
-    <span class="text-[11px] text-t1-ink-3">›</span>
-    <span class="text-xs font-semibold text-t1-navy">{{ activeSectionLabel }}</span>
+  <div class="flex h-13 shrink-0 items-center gap-2 border-b border-t1-line bg-t1-offwhite px-7">
+    <span class="text-xs text-t1-black/60">Workspace</span>
+    <span class="text-[11px] text-t1-black/40">›</span>
+    <span class="text-xs font-normal text-t1-black">{{ activeSectionLabel }}</span>
 
     <div class="flex-1"></div>
 
-    <div
-      class="flex items-center gap-1.5 rounded-full border border-t1-electric/15 bg-t1-electric/6 px-2.5 py-1"
-    >
-      <div class="h-1.5 w-1.5 rounded-full bg-t1-success"></div>
-      <span class="text-[11px] font-semibold text-t1-electric">Last activity 2h ago</span>
+    <div class="flex items-center gap-1.5 rounded-full border border-t1-line bg-white px-2.5 py-1">
+      <div class="h-1.5 w-1.5 rounded-full bg-t1-green"></div>
+      <span class="text-[11px] font-normal text-t1-black">Last activity 2h ago</span>
     </div>
 
     <div class="mx-1 h-4.5 w-px bg-t1-line"></div>
 
     <template v-if="!session.isAeAuthenticated">
-      <span v-if="session.authError" class="text-[11px] font-semibold text-t1-danger">
+      <span v-if="session.authError" class="text-[11px] font-normal text-t1-danger">
         {{ session.authError }}
       </span>
       <button
-        class="rounded-md border border-t1-line px-3 py-1.5 text-[11px] font-semibold text-t1-ink-2 transition-colors hover:border-t1-ink-2"
+        class="rounded-full border border-t1-black/25 px-3.5 py-1.5 text-[11px] font-normal text-t1-black transition-colors hover:border-t1-black"
         @click="session.signInAsAe"
       >
         {{ firebaseEnabled ? 'Sign in with Google' : 'Sign in as AE (dev)' }}
@@ -54,11 +52,11 @@ const avatarInitials = computed(() => {
 
     <template v-else>
       <button
-        class="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-bold transition-colors"
+        class="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-normal transition-colors"
         :class="
           editMode.isEditMode
-            ? 'bg-t1-navy text-white'
-            : 'border border-t1-line text-t1-ink-2 hover:border-t1-ink-2'
+            ? 'border border-t1-black bg-t1-black text-white'
+            : 'border border-t1-black/25 text-t1-black hover:border-t1-black'
         "
         @click="editMode.toggle"
       >
@@ -67,7 +65,7 @@ const avatarInitials = computed(() => {
         {{ editMode.isEditMode ? 'Done editing' : 'Edit' }}
       </button>
       <button
-        class="text-[11px] text-t1-ink-3 hover:text-t1-navy"
+        class="text-[11px] text-t1-black/60 hover:text-t1-black"
         @click="
           () => {
             editMode.exit()
@@ -80,16 +78,16 @@ const avatarInitials = computed(() => {
     </template>
 
     <button
-      class="relative flex h-8 w-8 items-center justify-center rounded-md hover:bg-t1-navy/5"
+      class="relative flex h-8 w-8 items-center justify-center rounded-full hover:bg-t1-black/5"
     >
-      <BellIcon class="h-4 w-4 text-t1-ink-3" />
+      <BellIcon class="h-4 w-4 text-t1-black/70" />
       <span
-        class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full border border-t1-cream bg-t1-electric"
+        class="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full border border-t1-offwhite bg-t1-blue"
       ></span>
     </button>
 
-    <div class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-electric">
-      <span class="text-[11px] font-bold text-white">{{ avatarInitials }}</span>
+    <div class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-black">
+      <span class="text-[11px] font-normal text-white">{{ avatarInitials }}</span>
     </div>
   </div>
 </template>

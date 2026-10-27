@@ -15,10 +15,10 @@ const bookMeetingUrl = ref('')
 const slackChannelUrl = ref('')
 
 const colorOptions: { value: TeamColorway; label: string; swatch: string }[] = [
-  { value: 'electric', label: 'Electric', swatch: 'bg-t1-electric' },
-  { value: 'teal', label: 'Teal', swatch: 'bg-t1-teal' },
-  { value: 'lime', label: 'Lime', swatch: 'bg-t1-lime' },
-  { value: 'navy', label: 'Navy', swatch: 'bg-t1-navy' },
+  { value: 'blue', label: 'Blue', swatch: 'bg-t1-blue text-white' },
+  { value: 'pine', label: 'Pine', swatch: 'bg-t1-pine text-white' },
+  { value: 'green', label: 'Green', swatch: 'bg-t1-green text-t1-black' },
+  { value: 'black', label: 'Black', swatch: 'bg-t1-black text-white' },
 ]
 
 watch(
@@ -38,7 +38,7 @@ function addMember() {
     name: 'New team member',
     role: '',
     initials: 'NA',
-    colorway: 'electric',
+    colorway: 'blue',
   })
 }
 
@@ -63,24 +63,24 @@ async function save() {
       <div
         v-for="member in draft"
         :key="member.id"
-        class="flex flex-col gap-2 rounded-t1-sm border border-t1-line p-3"
+        class="flex flex-col gap-2 rounded-t1 border border-t1-line p-3"
       >
         <div class="flex items-center gap-2">
           <Listbox v-model="member.colorway" as="div" class="relative shrink-0">
             <ListboxButton
-              class="flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold text-white"
-              :class="colorOptions.find((o) => o.value === member.colorway)?.swatch"
+              class="flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-normal"
+              :class="(colorOptions.find((o) => o.value === member.colorway) ?? colorOptions[3]).swatch"
             >
               {{ member.initials.slice(0, 2).toUpperCase() || 'NA' }}
             </ListboxButton>
             <ListboxOptions
-              class="absolute z-10 mt-1 w-28 rounded-md border border-t1-line bg-white py-1 shadow-t1-lifted"
+              class="absolute z-10 mt-1 w-28 rounded-t1 border border-t1-line bg-white py-1"
             >
               <ListboxOption
                 v-for="option in colorOptions"
                 :key="option.value"
                 :value="option.value"
-                class="flex cursor-pointer items-center gap-2 px-2.5 py-1.5 text-xs text-t1-ink hover:bg-t1-electric/6"
+                class="flex cursor-pointer items-center gap-2 px-2.5 py-1.5 text-xs text-t1-black hover:bg-t1-blue/6"
               >
                 <span class="h-3 w-3 rounded-full" :class="option.swatch"></span>
                 {{ option.label }}
@@ -92,18 +92,18 @@ async function save() {
             v-model="member.name"
             type="text"
             placeholder="Full name"
-            class="flex-1 rounded-md border border-t1-line px-2.5 py-1.5 text-[13px] font-semibold text-t1-navy focus:border-t1-electric focus:outline-none"
+            class="flex-1 rounded-t1 border border-t1-line px-2.5 py-1.5 text-[13px] font-normal text-t1-black focus:border-t1-blue focus:outline-none"
           />
           <input
             v-model="member.initials"
             type="text"
             maxlength="2"
             placeholder="AE"
-            class="w-14 rounded-md border border-t1-line px-2.5 py-1.5 text-center text-xs font-bold text-t1-ink-2 uppercase focus:border-t1-electric focus:outline-none"
+            class="w-14 rounded-t1 border border-t1-line px-2.5 py-1.5 text-center text-xs font-medium text-t1-black uppercase focus:border-t1-blue focus:outline-none"
           />
           <button
             type="button"
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-t1-danger hover:bg-t1-danger/8"
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-t1-danger hover:bg-t1-danger/8"
             @click="removeMember(member.id)"
           >
             <TrashIcon class="h-4 w-4" />
@@ -113,13 +113,13 @@ async function save() {
           v-model="member.role"
           type="text"
           placeholder="Role, e.g. Your Account Manager"
-          class="rounded-md border border-t1-line px-2.5 py-1.5 text-xs text-t1-ink-2 focus:border-t1-electric focus:outline-none"
+          class="rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
         />
       </div>
 
       <button
         type="button"
-        class="flex items-center justify-center gap-1.5 rounded-md border border-dashed border-t1-line py-2 text-xs font-bold text-t1-ink-2 hover:border-t1-electric hover:text-t1-electric"
+        class="flex items-center justify-center gap-1.5 rounded-t1 border border-dashed border-t1-black/25 py-2 text-xs font-normal text-t1-black hover:border-t1-blue hover:text-t1-blue"
         @click="addMember"
       >
         <PlusIcon class="h-3.5 w-3.5" />
@@ -127,19 +127,19 @@ async function save() {
       </button>
 
       <div class="flex flex-col gap-2 border-t border-t1-line pt-4">
-        <label class="text-xs font-bold text-t1-ink-2">Book a meeting link</label>
+        <label class="text-xs font-medium text-t1-black">Book a meeting link</label>
         <input
           v-model="bookMeetingUrl"
           type="text"
           placeholder="https://cal.com/..."
-          class="rounded-md border border-t1-line px-2.5 py-1.5 text-xs text-t1-ink-2 focus:border-t1-electric focus:outline-none"
+          class="rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
         />
-        <label class="mt-1 text-xs font-bold text-t1-ink-2">Joint Slack channel link</label>
+        <label class="mt-1 text-xs font-medium text-t1-black">Joint Slack channel link</label>
         <input
           v-model="slackChannelUrl"
           type="text"
           placeholder="https://....slack.com/archives/..."
-          class="rounded-md border border-t1-line px-2.5 py-1.5 text-xs text-t1-ink-2 focus:border-t1-electric focus:outline-none"
+          class="rounded-t1 border border-t1-line px-2.5 py-1.5 text-xs text-t1-black focus:border-t1-blue focus:outline-none"
         />
       </div>
     </div>

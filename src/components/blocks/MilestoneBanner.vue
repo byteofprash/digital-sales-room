@@ -25,37 +25,28 @@ const daysToGo = computed(() => {
 </script>
 
 <template>
-  <div
-    class="relative mb-6 flex items-center justify-between overflow-hidden rounded-t1-md bg-t1-navy px-6 py-4.5 shadow-t1-card"
-  >
+  <div class="relative mb-6 flex items-center justify-between rounded-t1 bg-t1-black px-7 py-5">
     <EditFab v-if="editMode.isEditMode" label="Edit milestone" @click="dialogOpen = true" />
 
-    <div
-      class="pointer-events-none absolute inset-0 bg-cover opacity-20"
-      style="background-image: url('/brand/particles-on-navy.png')"
-    ></div>
-
-    <div class="relative z-10 flex items-center gap-3.5">
-      <div
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-t1-sm border border-t1-electric/40 bg-t1-electric/25"
-      >
-        <CalendarDaysIcon class="h-4.5 w-4.5 text-t1-electric" />
+    <div class="flex items-center gap-4">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-t1-pine">
+        <CalendarDaysIcon class="h-4.5 w-4.5 text-white" />
       </div>
       <div>
-        <div class="mb-0.5 text-[10px] font-bold tracking-widest text-white/70 uppercase">
+        <div class="mb-1 text-[10px] font-medium tracking-[0.12em] text-white/60 uppercase">
           {{ targetGoLive.label }}
         </div>
-        <div class="font-display text-2xl font-bold tracking-tight text-t1-cream">
+        <div class="text-2xl leading-none font-light tracking-tight text-white">
           {{ formattedDate }}
         </div>
       </div>
     </div>
 
-    <div class="relative z-10 text-right">
-      <div class="font-display text-3xl font-bold tracking-tight text-t1-lime">
+    <div class="text-right" :class="editMode.isEditMode ? 'mr-36' : ''">
+      <div class="text-5xl leading-none font-light tracking-tight text-t1-green">
         {{ daysToGo }}
       </div>
-      <div class="mt-0.5 text-[11px] text-white/70">days to go</div>
+      <div class="mt-1 text-[11px] font-light text-white/70">days to go</div>
     </div>
 
     <EditMilestoneDialog v-model:open="dialogOpen" :target-go-live="targetGoLive" />
