@@ -75,6 +75,40 @@ The one seeded fixture (`acme-corp`) self-creates in Firestore, owned by whichev
 account first visits `/room/acme-corp` while signed in — there's no separate "create room" step
 yet (see deferred AE portal below).
 
+## Room management API
+
+Serverless endpoints (Vercel functions in `api/`, using `firebase-admin`) for the AE side of a room's
+lifecycle. Every call needs `Authorization: Bearer <Firebase ID token>` from a verified `@talon.one`
+account, and an AE can only see and change rooms they own (other AEs' rooms are a 404). Errors come
+back as `{ "error": string, "details"?: string[] }`.
+
+| Method & path | Purpose |
+| --- | --- |
+| `POST /api/rooms` | Create a room for a new prospect. Always starts as `draft`. Requires `prospectName`, `aeFirstName`, `targetGoLive: { date, label }`; optional `slug` (defaults to one derived from the prospect name, 409 if an explicit slug is taken), `team`, `milestones`, `bookMeetingUrl`, `slackChannelUrl`, `components`. → `201 { room }` |
+| `GET /api/rooms[?status=draft\|published\|archived]` | List the calling AE's rooms, newest update first. → `{ rooms }` |
+| `GET /api/rooms/:slug` | Fetch one room, whatever its status. → `{ room }` |
+| `PATCH /api/rooms/:slug` | Edit content: any subset of the `POST` fields. `components.hero/links/media/documents` are replaced per component. Slug, status and ownership can't be changed here; archived rooms are read-only (409). → `{ room }` |
+| `PUT /api/rooms/:slug/status` | Body `{ "status": "draft" \| "published" \| "archived" }`. → `{ room }` |
+
+**Status lifecycle:** `draft → published | archived`, `published → draft | archived`,
+`archived → draft`. Anything else is a 409; re-sending the current status is a no-op. Only
+`published` rooms are readable by prospects — `firestore.rules` denies `get` on drafts and archived
+rooms to everyone but the owner (rooms that predate `status` count as published), and the client
+can no longer change `status` directly, so these endpoints are the only way to flip it.
+
+**Trying it without SSO:** set `DEV_AUTH_BYPASS=true` and call the API with
+`Authorization: Bearer dev:test.ae` — that authenticates as `test.ae@talon.one` (any `dev:<name>`
+works, and `dev:test@abc.com` authenticates as exactly `test@abc.com`; handy for checking that two AEs can't see each other's rooms). It's ignored on Vercel
+production. To also skip the service account, run the Firestore emulator
+(`firebase emulators:start --only firestore`) and set `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`;
+otherwise the three `FIREBASE_*` variables below are still needed for storage.
+
+**Setup:** add a Firebase service account (Project settings → Service accounts → Generate new
+private key) as the non-public env vars `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` and
+`FIREBASE_PRIVATE_KEY` on the Vercel project, then redeploy the Firestore rules. `vercel.json`
+excludes `/api/*` from the SPA rewrite. Locally, run `vercel dev` (plain `npm run dev` serves only
+the front end).
+
 ## Deploying to Vercel
 
 1. In the Vercel dashboard: **Add New → Project**, import this GitHub repo.
@@ -94,6 +128,7 @@ yet (see deferred AE portal below).
 ## Project layout
 
 ```
+api/               Vercel serverless endpoints (room create / edit / status) + shared _lib
 src/
   lib/firebase.ts   Firebase app/Auth/Firestore init; firebaseEnabled flag
   data/
@@ -117,6 +152,6 @@ src/
   tokens never reach the browser).
 - Real engagement/analytics pipeline feeding the internal-only Buyer Intent Signals feed (currently
   seeded fixture data in `rooms/{slug}/private/engagement`).
-- AE portal to create brand-new rooms and manage the rest of the nav (Requirements, Timeline,
+- AE portal UI on top of the room management API (the endpoints exist; no screens call them yet), and the rest of the nav (Requirements, Timeline,
   Architecture, etc. — currently stubbed as "coming soon"). Today only the one seeded fixture can
   self-create in Firestore.

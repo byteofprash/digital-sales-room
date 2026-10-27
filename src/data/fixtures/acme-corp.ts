@@ -3,6 +3,7 @@ import type { Workspace } from '../types'
 export const acmeCorpWorkspace: Workspace = {
   id: 'ws-acme-corp',
   slug: 'acme-corp',
+  status: 'published',
   prospectName: 'Acme Corp',
   aeFirstName: 'Stefan',
   bookMeetingUrl: 'https://cal.com/talon-one/acme-corp',
