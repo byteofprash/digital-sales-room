@@ -143,7 +143,7 @@ export function createRoomsMcpServer(api: RoomsApi) {
           })
           .optional()
           .describe(
-            'Replaces the featured video. videoUrl must be a direct video file (e.g. .mp4); set it to "" to hide the video, and the Call recordings block is shown instead',
+            'Replaces the featured video. videoUrl must be a direct video file (e.g. .mp4); set it to "" to hide the video, and the Recordings block is shown instead',
           ),
       },
     },
@@ -166,7 +166,7 @@ export function createRoomsMcpServer(api: RoomsApi) {
     {
       title: 'Add item to a section',
       description:
-        'Adds one item (a link tile, document, requirements link, architecture link, timeline step, customer story, Gong call recording, team member or milestone) to a room section. An id is generated for you. Call describe_sections for the fields each section needs.',
+        'Adds one item (a link tile, document, requirements link, architecture link, timeline step, customer story, recording link (Gong or Google Drive), team member or milestone) to a room section. An id is generated for you. Call describe_sections for the fields each section needs.',
       inputSchema: { slug, section, item: z.record(z.string(), z.unknown()).describe('The item fields, without an id') },
     },
     ({ slug, section, item }) =>

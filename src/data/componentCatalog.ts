@@ -60,11 +60,11 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'recordings',
-    name: 'Call recordings',
-    summary: 'Gong recordings of your calls with the prospect. It takes the place of the featured video when a room has no video.',
+    name: 'Recordings',
+    summary: 'A list of links to recordings, such as Gong calls or Google Drive videos. It takes the place of the featured video when a room has no video.',
     whatItShows: [
-      'One card per Gong call: title, date and an optional note on what was covered',
-      'Each card opens the call in Gong; newest first',
+      'One card per link: a title, an optional note, and a label for where it is hosted (Gong, Google Drive or other)',
+      'Each card opens the recording in a new tab',
       'Shown only when the room has no featured video',
     ],
     visibility: 'prospect',

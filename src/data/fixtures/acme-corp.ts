@@ -167,21 +167,19 @@ export const acmeCorpWorkspace: Workspace = {
         url: 'https://www.talon.one/customers',
       },
     ],
-    // Sample Gong calls: shown instead of the featured video whenever a room has no video.
+    // Sample recording links (Gong or Google Drive): shown instead of the featured video whenever a room has no video.
     recordings: [
       {
         id: 'rec-1',
         title: 'Discovery workshop',
-        date: '2026-05-15',
         description: 'Goals, success metrics and the use cases in scope.',
         url: 'https://app.gong.io/call?id=sample-discovery',
       },
       {
         id: 'rec-2',
         title: 'Technical deep-dive',
-        date: '2026-06-20',
         description: 'Integration architecture with the Acme platform team.',
-        url: 'https://app.gong.io/call?id=sample-deep-dive',
+        url: 'https://drive.google.com/file/d/sample-deep-dive/view',
       },
     ],
     engagement: [

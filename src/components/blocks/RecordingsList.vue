@@ -1,21 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { ArrowTopRightOnSquareIcon, VideoCameraIcon } from '@heroicons/vue/24/outline'
 import type { Recording } from '@/data/types'
+import { linkKind, linkKindLabel } from '@/lib/linkKind'
 import { useEditModeStore } from '@/stores/editMode'
 import EditFab from '@/components/ui/EditFab.vue'
 import EditRecordingsDialog from '@/components/dialogs/EditRecordingsDialog.vue'
 
-const props = defineProps<{ recordings: Recording[] }>()
+defineProps<{ recordings: Recording[] }>()
 
 const editMode = useEditModeStore()
 const dialogOpen = ref(false)
-
-const newestFirst = computed(() => [...props.recordings].sort((a, b) => b.date.localeCompare(a.date)))
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
 </script>
 
 <template>
@@ -23,12 +18,12 @@ function formatDate(date: string) {
     <EditFab v-if="editMode.isEditMode" label="Edit recordings" @click="dialogOpen = true" />
 
     <div class="mb-3.5 text-[10px] font-medium tracking-[0.12em] text-t1-blue uppercase">
-      Call recordings
+      Recordings
     </div>
 
-    <div v-if="newestFirst.length" class="flex flex-col gap-2.5">
+    <div v-if="recordings.length" class="flex flex-col gap-2.5">
       <a
-        v-for="recording in newestFirst"
+        v-for="recording in recordings"
         :key="recording.id"
         :href="recording.url"
         target="_blank"
@@ -40,7 +35,9 @@ function formatDate(date: string) {
         </div>
         <div class="min-w-0 flex-1">
           <div class="text-[13px] font-normal text-t1-black">{{ recording.title }}</div>
-          <div class="text-[11px] font-light text-t1-black/60">{{ formatDate(recording.date) }}</div>
+          <div class="text-[11px] font-light text-t1-black/60">
+            {{ linkKindLabel[linkKind(recording.url)] }}
+          </div>
           <p v-if="recording.description" class="mt-1 text-xs font-light text-t1-black/70">
             {{ recording.description }}
           </p>
@@ -51,7 +48,7 @@ function formatDate(date: string) {
       </a>
     </div>
     <p v-else class="py-8 text-center text-[13px] font-light text-t1-black/60">
-      Recordings of your calls with us will appear here.
+      Recordings will appear here.
     </p>
 
     <EditRecordingsDialog v-model:open="dialogOpen" :recordings="recordings" />

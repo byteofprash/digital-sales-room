@@ -223,7 +223,6 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
       if (comp.recordings !== undefined) {
         c.list(comp.recordings, 'components.recordings', (r, rat) => {
           c.str(r, 'title', rat)
-          c.date(r, 'date', rat)
           c.str(r, 'description', rat, { allowEmpty: true })
           c.url(r, 'url', rat)
         })

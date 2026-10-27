@@ -43,8 +43,8 @@ export const SECTIONS = {
   recordings: {
     where: 'components',
     idPrefix: 'rec',
-    shape: '{ title, date (YYYY-MM-DD), description (may be empty), url (https link to the call in Gong) }',
-    page: 'Home: call recordings (shown instead of the featured video when the room has no video)',
+    shape: '{ title, description (may be empty), url (https link to a recording: a Gong call or a Google Drive video) }',
+    page: 'Home: recordings list (shown instead of the featured video when the room has no video)',
   },
   team: {
     where: 'room',
@@ -71,8 +71,8 @@ export const SECTION_NAMES = Object.keys(SECTIONS) as [SectionName, ...SectionNa
 export const OTHER_COMPONENTS = {
   welcomeHero: 'Home banner. Set aeFirstName / prospectName and the "since last visit" list with update_room_details (hero).',
   featuredVideo:
-    'Home video. Set with update_room_details (media.videoUrl must be a direct video file, e.g. an .mp4 link). When videoUrl is empty, the Call recordings block is shown in its place.',
-  callRecordings: 'Home block with one card per Gong call. Edit the "recordings" section with add_item. Only shown when the room has no featured video.',
+    'Home video. Set with update_room_details (media.videoUrl must be a direct video file, e.g. an .mp4 link). When videoUrl is empty, the Recordings block is shown in its place.',
+  recordings: 'Home block: a list of links to recordings (Gong calls or Google Drive videos). Edit the "recordings" section with add_item. Only shown when the room has no featured video.',
   whatsNext: 'Home block showing the current and next timeline step. Nothing to configure: it reads the "timeline" section.',
   goLiveCountdown: 'Home banner with the target go-live date. Set targetGoLive with update_room_details or create_room.',
   teamCard: 'Home card. Team members are the "team" section; the Book a meeting and Slack buttons use bookMeetingUrl and slackChannelUrl (update_room_details).',

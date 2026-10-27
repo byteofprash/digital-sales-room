@@ -91,15 +91,12 @@ export interface TimelineStep {
   status: MilestoneStatus
 }
 
-/** One recorded call, linked to Gong. */
+/** A link to a recording: a Gong call, a Google Drive video, or any other page. */
 export interface Recording {
   id: string
   title: string
-  /** ISO date of the call */
-  date: string
   /** Optional one-liner on what was covered */
   description: string
-  /** Link to the call in Gong */
   url: string
 }
 

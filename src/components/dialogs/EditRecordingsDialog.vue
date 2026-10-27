@@ -29,7 +29,6 @@ function add() {
   draft.value.push({
     id: `rec-${crypto.randomUUID()}`,
     title: '',
-    date: new Date().toISOString().slice(0, 10),
     description: '',
     url: '',
   })
@@ -41,10 +40,10 @@ function remove(id: string) {
 
 async function save() {
   const bad = draft.value.find(
-    (recording) => !recording.title.trim() || !recording.date || !isHttpUrl(recording.url.trim()),
+    (recording) => !recording.title.trim() || !isHttpUrl(recording.url.trim()),
   )
   if (bad) {
-    error.value = 'Every recording needs a title, a date and a full Gong link starting with https://'
+    error.value = 'Every recording needs a title and a full link starting with https://'
     return
   }
   const cleaned = draft.value.map((recording) => ({
@@ -62,11 +61,12 @@ async function save() {
 </script>
 
 <template>
-  <EditDialog :open="open" title="Edit call recordings" @close="emit('update:open', false)" @save="save">
+  <EditDialog :open="open" title="Edit recordings" @close="emit('update:open', false)" @save="save">
     <div class="flex flex-col gap-4">
       <p class="text-xs font-light text-t1-black/65">
-        One card per Gong call. Paste the call's share link, and make sure its sharing settings let the
-        buying committee open it. These show on the room only when it has no featured video.
+        Add links to recordings, such as a Gong call or a video in Google Drive. Make sure the sharing
+        settings let the buying committee open them. These show on the room only when it has no
+        featured video.
       </p>
 
       <div
@@ -78,10 +78,9 @@ async function save() {
           <input
             v-model="recording.title"
             type="text"
-            placeholder="Call title, e.g. Technical deep-dive"
+            placeholder="Title, e.g. Technical deep-dive"
             :class="[inputClass, 'flex-1']"
           />
-          <input v-model="recording.date" type="date" :class="[inputClass, 'w-36']" />
           <button type="button" :class="removeButtonClass" @click="remove(recording.id)">
             <TrashIcon class="h-4 w-4" />
           </button>
@@ -95,7 +94,7 @@ async function save() {
         <input
           v-model="recording.url"
           type="url"
-          placeholder="https://app.gong.io/call?id=…"
+          placeholder="https://app.gong.io/call?id=… or https://drive.google.com/file/d/…"
           :class="inputClass"
         />
       </div>

@@ -1,6 +1,7 @@
-export type LinkKind = 'pdf' | 'google-doc' | 'google-sheet' | 'google-slides' | 'google-drive' | 'link'
+export type LinkKind = 'gong' | 'pdf' | 'google-doc' | 'google-sheet' | 'google-slides' | 'google-drive' | 'link'
 
 export const linkKindLabel: Record<LinkKind, string> = {
+  gong: 'Gong',
   pdf: 'PDF',
   'google-doc': 'Google Doc',
   'google-sheet': 'Google Sheet',
@@ -17,6 +18,7 @@ export function linkKind(url: string): LinkKind {
   } catch {
     return 'link'
   }
+  if (parsed.hostname === 'gong.io' || parsed.hostname.endsWith('.gong.io')) return 'gong'
   if (parsed.pathname.toLowerCase().endsWith('.pdf')) return 'pdf'
   if (parsed.hostname === 'docs.google.com') {
     if (parsed.pathname.startsWith('/document')) return 'google-doc'
