@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { ApiError, type RoomsApi } from './roomsApi.js'
-import { SECTIONS, SECTION_NAMES, type SectionName } from './sections.js'
+import { OTHER_COMPONENTS, SECTIONS, SECTION_NAMES, type SectionName } from './sections.js'
 
 type Json = Record<string, unknown>
 type Item = Json & { id: string }
@@ -52,15 +52,16 @@ export function createRoomsMcpServer(api: RoomsApi) {
     {
       title: 'Describe room sections',
       description:
-        'Lists every editable list in a room (links, documents, requirements, architecture, timeline, stories, team, milestones), which page it appears on, and the exact fields an item needs. Call this before add_item or update_item.',
+        'Describes everything a room can contain. "sections" are the editable lists (links, documents, requirements, architecture, timeline, stories, recordings, team, milestones): which page each appears on and the exact fields an item needs. "otherComponents" are the blocks configured through update_room_details or derived from a section. Call this before add_item or update_item.',
       annotations: { readOnlyHint: true },
     },
     async () =>
-      text(
-        Object.fromEntries(
+      text({
+        sections: Object.fromEntries(
           Object.entries(SECTIONS).map(([name, s]) => [name, { appearsOn: s.page, itemShape: s.shape }]),
         ),
-      ),
+        otherComponents: OTHER_COMPONENTS,
+      }),
   )
 
   server.registerTool(
@@ -141,7 +142,9 @@ export function createRoomsMcpServer(api: RoomsApi) {
             postedLabel: z.string(),
           })
           .optional()
-          .describe('Replaces the featured video'),
+          .describe(
+            'Replaces the featured video. videoUrl must be a direct video file (e.g. .mp4); set it to "" to hide the video, and the Call recordings block is shown instead',
+          ),
       },
     },
     ({ slug, hero, media, ...fields }) =>
@@ -163,7 +166,7 @@ export function createRoomsMcpServer(api: RoomsApi) {
     {
       title: 'Add item to a section',
       description:
-        'Adds one item (a link, document, requirements link, architecture link, timeline step, customer story, team member or milestone) to a room section. An id is generated for you. Call describe_sections for the fields each section needs.',
+        'Adds one item (a link tile, document, requirements link, architecture link, timeline step, customer story, Gong call recording, team member or milestone) to a room section. An id is generated for you. Call describe_sections for the fields each section needs.',
       inputSchema: { slug, section, item: z.record(z.string(), z.unknown()).describe('The item fields, without an id') },
     },
     ({ slug, section, item }) =>

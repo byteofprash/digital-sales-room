@@ -143,11 +143,11 @@ speaks stdio, bridge it with `npx mcp-remote https://<your-domain>/api/mcp`.
 
 | Tool | What it does |
 | --- | --- |
-| `describe_sections` | Lists the editable sections and the exact fields each item needs |
+| `describe_sections` | Describes everything a room can contain: each editable section with its page and exact item fields, plus the blocks that are configured elsewhere or derived (video, What's next, go-live countdown, …) |
 | `list_rooms` / `get_room` | Browse rooms, or open one in full (including item ids) |
 | `create_room` | New room for a prospect, always a draft |
-| `update_room_details` | Names, meeting/Slack links, go-live date, welcome "since last visit" list, featured video |
-| `add_item` / `update_item` / `remove_item` | Edit one entry in `links`, `documents`, `requirements`, `architecture`, `timeline`, `stories`, `team` or `milestones` without resending the list |
+| `update_room_details` | Names, meeting/Slack links, go-live date, welcome "since last visit" list, featured video (clear it and Call recordings are shown instead) |
+| `add_item` / `update_item` / `remove_item` | Edit one entry in `links`, `documents` (with a link to the file), `requirements`, `architecture`, `timeline`, `stories`, `recordings` (Gong calls), `team` or `milestones` without resending the list |
 | `set_room_status` | Move a room between draft, published and archived |
 
 The tools call this app's own room API, so validation and status rules are identical to the web app,

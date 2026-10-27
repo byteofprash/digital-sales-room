@@ -13,8 +13,8 @@ export const SECTIONS = {
   documents: {
     where: 'components',
     idPrefix: 'doc',
-    shape: '{ displayName, category, fileType: "pdf"|"markdown"|"sheet"|"recording"|"other", actionLabel (e.g. "View"), href? (https URL), driveFileId? (string or null) }',
-    page: 'Home: documents list',
+    shape: '{ displayName, category, fileType: "pdf"|"markdown"|"sheet"|"recording"|"other", actionLabel (e.g. "View"), href (https link to the file, a PDF or Google Doc; leave "" if there is none yet, and the View button stays disabled until it is set), driveFileId? (string or null) }',
+    page: 'Home: Key Documents list, and the full Documents page behind its "View all" button',
   },
   requirements: {
     where: 'components',
@@ -32,7 +32,7 @@ export const SECTIONS = {
     where: 'components',
     idPrefix: 'tl',
     shape: '{ title, description, ownerSide: "talon"|"prospect"|"joint", ownerName, dueDate (YYYY-MM-DD), status: "done"|"active"|"upcoming" }',
-    page: 'Joint project timeline page',
+    page: 'Joint project timeline page. The first two steps that are not done also appear on Home as the "What\'s next" block, so marking a step done moves it on',
   },
   stories: {
     where: 'components',
@@ -62,3 +62,19 @@ export const SECTIONS = {
 
 export type SectionName = keyof typeof SECTIONS
 export const SECTION_NAMES = Object.keys(SECTIONS) as [SectionName, ...SectionName[]]
+
+/**
+ * Components that have no list of their own: they're configured through
+ * update_room_details or read from another section. Kept here so
+ * describe_sections can give the assistant the full picture of a room.
+ */
+export const OTHER_COMPONENTS = {
+  welcomeHero: 'Home banner. Set aeFirstName / prospectName and the "since last visit" list with update_room_details (hero).',
+  featuredVideo:
+    'Home video. Set with update_room_details (media.videoUrl must be a direct video file, e.g. an .mp4 link). When videoUrl is empty, the Call recordings block is shown in its place.',
+  callRecordings: 'Home block with one card per Gong call. Edit the "recordings" section with add_item. Only shown when the room has no featured video.',
+  whatsNext: 'Home block showing the current and next timeline step. Nothing to configure: it reads the "timeline" section.',
+  goLiveCountdown: 'Home banner with the target go-live date. Set targetGoLive with update_room_details or create_room.',
+  teamCard: 'Home card. Team members are the "team" section; the Book a meeting and Slack buttons use bookMeetingUrl and slackChannelUrl (update_room_details).',
+  buyerIntentSignals: 'Internal-only feed of who viewed what. Filled in automatically and not editable through these tools; prospects never see it.',
+} as const
