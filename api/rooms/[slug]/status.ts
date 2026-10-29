@@ -31,7 +31,7 @@ export default route({
     // validate against the same stale status.
     await getAdminDb().runTransaction(async (tx) => {
       const data = (await tx.get(ref)).data()
-      if (!data || (!ae.seeAll && data.ownerUid !== ae.uid)) throw new HttpError(404, 'Room not found')
+      if (!data || data.ownerUid !== ae.uid) throw new HttpError(404, 'Room not found')
 
       const current: RoomStatus = data.status ?? 'published'
       if (current === next) return

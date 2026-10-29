@@ -15,7 +15,8 @@ const ALLOWED_EMAIL_DOMAIN = 'talon.one'
  * localStorage mock; once Firebase is configured, Firestore's rules require a real sign-in
  * whatever this says, so it is ignored there.
  */
-const devBypass = import.meta.env.VITE_DEV_AUTH_BYPASS === 'true' && !firebaseEnabled
+const devBypass =
+  import.meta.env.DEV && import.meta.env.VITE_DEV_AUTH_BYPASS === 'true' && !firebaseEnabled
 const DEV_AE_NAME = 'Stefan Weber'
 
 /**
@@ -43,6 +44,11 @@ export const useSessionStore = defineStore('session', () => {
     authError.value = null
 
     if (!firebaseEnabled || !auth) {
+      // Production builds fail closed: no fake sign-in without a Firebase project.
+      if (!import.meta.env.DEV) {
+        authError.value = 'Sign-in is not configured.'
+        return
+      }
       // Dev-only stand-in — no Firebase project configured yet.
       isAeAuthenticated.value = true
       aeName.value = DEV_AE_NAME

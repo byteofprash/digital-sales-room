@@ -72,7 +72,7 @@ export function toRoomResponse(data: DocumentData): RoomResponse {
 /** Loads a room and checks the caller owns it. 404 (not 403) for other AEs' rooms so slugs can't be probed. */
 export async function loadOwnedRoom(slug: string, ae: Ae) {
   const snap = await roomRef(slug).get()
-  if (!snap.exists || (!ae.seeAll && snap.data()!.ownerUid !== ae.uid)) throw new HttpError(404, 'Room not found')
+  if (!snap.exists || snap.data()!.ownerUid !== ae.uid) throw new HttpError(404, 'Room not found')
   return { ref: snap.ref, data: snap.data()! }
 }
 

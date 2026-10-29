@@ -76,9 +76,9 @@ account first visits `/room/acme-corp` while signed in — there's no separate "
 yet (see deferred AE portal below).
 
 **Skipping sign-in while developing:** set `VITE_DEV_AUTH_BYPASS=true` in `.env.local` and the app
-starts signed in as the dev AE, so `/ae` and Edit mode need no click. It is the front-end twin of
-the API's `DEV_AUTH_BYPASS` and only works against the localStorage mock: once the `VITE_FIREBASE_*`
-values are set, Firestore's rules require a real `@talon.one` sign-in and the flag is ignored.
+starts signed in as the dev AE, so `/ae` and Edit mode need no click. It only works in `npm run dev`
+against the localStorage mock: production builds ignore it, and once the `VITE_FIREBASE_*` values
+are set, Firestore's rules require a real `@talon.one` sign-in.
 
 ## Room sections
 
@@ -117,14 +117,12 @@ back as `{ "error": string, "details"?: string[] }`.
 rooms to everyone but the owner (rooms that predate `status` count as published), and the client
 can no longer change `status` directly, so these endpoints are the only way to flip it.
 
-**Auth is currently switched off.** With `DEV_AUTH_BYPASS=true` (set on Vercel for every
-environment, production included) the API accepts any request with no token and every caller can see
-and edit all rooms. An optional `Authorization: Bearer dev:<name>[@<domain>]` header only chooses the
-owner stamped on new rooms (default `dev@talon.one`). **Anyone who can reach the URL can create,
-edit and publish rooms**, so remove the variable before real prospects or data are involved; real
-`@talon.one` Firebase sign-in is enforced again as soon as it's gone. To skip the service account too
-locally, run the Firestore emulator (`firebase emulators:start --only firestore`) with
-`FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`.
+**Auth:** every call is verified against Firebase (including token revocation) and must come from a
+verified `@talon.one` Google account; there is no bypass mode. To lock out a leaver immediately,
+disable them in Google Workspace and revoke their Firebase refresh tokens
+(`getAuth().revokeRefreshTokens(uid)`). Locally, you can run against the Firestore emulator
+(`firebase emulators:start --only firestore`) with `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080`, but
+requests still need a valid Firebase ID token (e.g. from the Auth emulator).
 
 **Setup:** add a Firebase service account (Project settings → Service accounts → Generate new
 private key) as the non-public env vars `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL` and
@@ -157,8 +155,8 @@ speaks stdio, bridge it with `npx mcp-remote https://<your-domain>/api/mcp`.
 
 The tools call this app's own room API, so validation and status rules are identical to the web app,
 and the caller's `Authorization` header is forwarded to it. That means **the MCP endpoint is exactly as
-open as the API**: while `DEV_AUTH_BYPASS=true`, anyone who knows the URL can edit every room and
-publish; once real sign-in is on, clients must send a Firebase ID token as a bearer token. The endpoint
+open as the API**: clients must send a Firebase ID token for a `@talon.one` account as a bearer
+token. The endpoint
 finds its own address from Vercel's system environment variables (set `ROOMS_API_URL` to override).
 Edits to a list read the room and write the whole list back, so two edits at the same instant can
 overwrite each other.
