@@ -10,6 +10,15 @@ import { auth, firebaseEnabled, googleProvider } from '@/lib/firebase'
 const ALLOWED_EMAIL_DOMAIN = 'talon.one'
 
 /**
+ * Front-end counterpart of the API's DEV_AUTH_BYPASS: with VITE_DEV_AUTH_BYPASS=true the app starts
+ * signed in as the dev AE, so /ae and Edit mode need no click. It only takes effect against the
+ * localStorage mock; once Firebase is configured, Firestore's rules require a real sign-in
+ * whatever this says, so it is ignored there.
+ */
+const devBypass = import.meta.env.VITE_DEV_AUTH_BYPASS === 'true' && !firebaseEnabled
+const DEV_AE_NAME = 'Stefan Weber'
+
+/**
  * AE identity for the Edit button and Firestore ownership checks. Backed by
  * real Firebase Auth (Google Sign-In, restricted to the talon.one workspace)
  * once a Firebase project is configured; otherwise falls back to a dev-only
@@ -17,8 +26,8 @@ const ALLOWED_EMAIL_DOMAIN = 'talon.one'
  * fallback in workspaceRepository.ts).
  */
 export const useSessionStore = defineStore('session', () => {
-  const isAeAuthenticated = ref(false)
-  const aeName = ref('')
+  const isAeAuthenticated = ref(devBypass)
+  const aeName = ref(devBypass ? DEV_AE_NAME : '')
   const aeUid = ref<string | null>(null)
   const authError = ref<string | null>(null)
 
@@ -36,7 +45,7 @@ export const useSessionStore = defineStore('session', () => {
     if (!firebaseEnabled || !auth) {
       // Dev-only stand-in — no Firebase project configured yet.
       isAeAuthenticated.value = true
-      aeName.value = 'Stefan Weber'
+      aeName.value = DEV_AE_NAME
       return
     }
 

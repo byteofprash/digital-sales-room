@@ -75,6 +75,11 @@ The one seeded fixture (`acme-corp`) self-creates in Firestore, owned by whichev
 account first visits `/room/acme-corp` while signed in — there's no separate "create room" step
 yet (see deferred AE portal below).
 
+**Skipping sign-in while developing:** set `VITE_DEV_AUTH_BYPASS=true` in `.env.local` and the app
+starts signed in as the dev AE, so `/ae` and Edit mode need no click. It is the front-end twin of
+the API's `DEV_AUTH_BYPASS` and only works against the localStorage mock: once the `VITE_FIREBASE_*`
+values are set, Firestore's rules require a real `@talon.one` sign-in and the flag is ignored.
+
 ## Room sections
 
 Besides the Home page, each room has four pages reached from the sidebar. All are plain data on the
