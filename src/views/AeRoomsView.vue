@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ArrowTopRightOnSquareIcon, EyeIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
+import { ArrowTopRightOnSquareIcon, LockClosedIcon } from '@heroicons/vue/24/outline'
 import { CheckIcon } from '@heroicons/vue/24/solid'
 import { componentCatalog, type CatalogEntry } from '@/data/componentCatalog'
 import { workspaceRepository } from '@/data/workspaceRepository'
@@ -11,6 +11,7 @@ import { nextSteps } from '@/lib/nextSteps'
 import { useSessionStore } from '@/stores/session'
 import { useWorkspaceStore } from '@/stores/workspace'
 import { firebaseEnabled } from '@/lib/firebase'
+import { inputClass } from '@/components/ui/formClasses'
 import EditLinksDialog from '@/components/dialogs/EditLinksDialog.vue'
 import EditDocumentsDialog from '@/components/dialogs/EditDocumentsDialog.vue'
 import EditMilestoneDialog from '@/components/dialogs/EditMilestoneDialog.vue'
@@ -28,6 +29,9 @@ const session = useSessionStore()
 const store = useWorkspaceStore()
 
 const rooms = ref<RoomSummary[]>([])
+const chipClass =
+  'rounded-full border border-t1-black/25 bg-white px-3.5 py-1.5 text-xs font-normal text-t1-black transition-colors hover:border-t1-black'
+
 const roomsLoading = ref(false)
 const roomsError = ref('')
 const openDialog = ref<ComponentId | null>(null)
@@ -55,8 +59,25 @@ const entries = computed(() =>
     .map((id) => componentCatalog.find((entry) => entry.id === id))
     .filter((entry): entry is CatalogEntry => Boolean(entry)),
 )
-const blocks = computed(() => entries.value.filter((entry) => !entry.page))
-const pages = computed(() => entries.value.filter((entry) => entry.page))
+
+const GROUP_ORDER = ['Introduction', 'Solution', 'Proof', 'Plan', 'Resources']
+const filter = ref('')
+
+/** Components filed by category, narrowed by the filter box. Groups with no match disappear. */
+const groups = computed(() => {
+  const q = filter.value.trim().toLowerCase()
+  const matching = entries.value.filter(
+    (entry) => !q || `${entry.name} ${entry.summary} ${entry.group}`.toLowerCase().includes(q),
+  )
+  return GROUP_ORDER.map((name) => ({
+    name,
+    items: matching.filter((entry) => entry.group === name),
+  })).filter((group) => group.items.length)
+})
+const selectedEntries = computed(() =>
+  entries.value.filter((entry) => enabled.value.includes(entry.id as ComponentId)),
+)
+const groupSize = (name: string) => entries.value.filter((entry) => entry.group === name)
 
 const enabled = computed(() => (ws.value ? enabledIds(ws.value) : []))
 const enabledCount = computed(() => enabled.value.length)
@@ -123,12 +144,13 @@ function selectRoom(slug: string) {
   router.replace({ query: { room: slug } })
 }
 
-async function toggle(id: ComponentId) {
+/** Switches components on or off in one save, keeping the picker's order. */
+async function setEnabled(ids: ComponentId[], on: boolean) {
   if (!ws.value) return
   saveError.value = ''
   const current = enabledIds(ws.value)
   const next = selectableComponentIds.filter((c) =>
-    c === id ? !current.includes(c) : current.includes(c),
+    ids.includes(c) ? on : current.includes(c),
   )
   try {
     await store.updateComponent((w) => {
@@ -138,6 +160,15 @@ async function toggle(id: ComponentId) {
   } catch {
     saveError.value = 'Could not save that change. Please try again.'
   }
+}
+
+function toggle(id: ComponentId) {
+  return setEnabled([id], !enabled.value.includes(id))
+}
+
+function toggleGroup(name: string) {
+  const ids = groupSize(name).map((entry) => entry.id as ComponentId)
+  return setEnabled(ids, !ids.every((id) => enabled.value.includes(id)))
 }
 
 function setDialog(id: ComponentId, open: boolean) {
@@ -182,7 +213,7 @@ onMounted(() => {
 <template>
   <div class="h-screen overflow-y-auto bg-t1-offwhite font-body">
     <header class="bg-t1-black px-8 py-9">
-      <div class="mx-auto max-w-5xl">
+      <div class="mx-auto max-w-6xl">
         <RouterLink to="/" class="text-[11px] font-normal text-white/60 hover:text-white">
           ← Back to a sample room
         </RouterLink>
@@ -196,7 +227,7 @@ onMounted(() => {
       </div>
     </header>
 
-    <main class="mx-auto max-w-5xl px-8 py-7">
+    <main class="mx-auto max-w-6xl px-8 py-7">
       <!-- Signed out -->
       <div
         v-if="!session.isAeAuthenticated"
@@ -295,7 +326,7 @@ onMounted(() => {
                   </span>
                 </div>
                 <div class="mt-0.5 text-[13px] font-light text-t1-black/70">
-                  {{ enabledCount }} of {{ entries.length }} components selected
+                  Tick what should appear in this room, then fill each one in.
                 </div>
               </div>
               <RouterLink
@@ -307,101 +338,169 @@ onMounted(() => {
               </RouterLink>
             </div>
 
-            <p v-if="saveError" class="mb-3 text-xs font-normal text-t1-danger">{{ saveError }}</p>
-
-            <template v-for="group in [
-              { title: 'On the room’s home page', hint: 'Blocks that sit on the Workspace Home.', items: blocks },
-              { title: 'Pages', hint: 'Each one is its own page, reached from the sidebar.', items: pages },
-            ]" :key="group.title">
-              <div class="mb-2 flex items-baseline gap-2">
-                <h3 class="text-[10px] font-medium tracking-[0.12em] text-t1-grey uppercase">
-                  {{ group.title }}
-                </h3>
-                <span class="text-[11px] font-light text-t1-black/55">{{ group.hint }}</span>
-              </div>
-              <ul class="mb-6 overflow-hidden rounded-t1 border border-t1-line bg-white">
-                <li
-                  v-for="entry in group.items"
-                  :key="entry.id"
-                  class="flex items-start gap-3.5 border-b border-t1-line px-4 py-3.5 last:border-b-0"
-                >
-                  <button
-                    type="button"
-                    role="checkbox"
-                    :aria-checked="enabled.includes(entry.id as ComponentId)"
-                    :aria-label="`Show ${entry.name} in this room`"
-                    class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-t1 border transition-colors"
-                    :class="
-                      enabled.includes(entry.id as ComponentId)
-                        ? 'border-t1-blue bg-t1-blue text-white'
-                        : 'border-t1-black/30 bg-white hover:border-t1-black'
-                    "
-                    @click="toggle(entry.id as ComponentId)"
-                  >
-                    <CheckIcon v-if="enabled.includes(entry.id as ComponentId)" class="h-3 w-3" />
+            <div class="grid items-start gap-6 xl:grid-cols-[1fr_16rem]">
+              <div>
+                <div class="mb-2 flex flex-wrap items-center gap-2">
+                  <input
+                    v-model="filter"
+                    type="search"
+                    placeholder="Filter components"
+                    aria-label="Filter components"
+                    :class="[inputClass, 'min-w-48 flex-1 bg-white']"
+                  />
+                  <button type="button" :class="chipClass" @click="setEnabled(selectableComponentIds, true)">
+                    Select all
                   </button>
+                  <button type="button" :class="chipClass" @click="setEnabled(selectableComponentIds, false)">
+                    Clear
+                  </button>
+                  <span class="ml-auto text-[13px] font-light text-t1-black/70">
+                    <b class="font-medium text-t1-black">{{ enabledCount }}</b> of
+                    {{ entries.length }} selected
+                  </span>
+                </div>
 
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <span class="text-sm font-normal text-t1-black">{{ entry.name }}</span>
-                      <span
-                        v-if="entry.visibility === 'internal'"
-                        class="flex items-center gap-1 text-[10px] font-medium tracking-[0.12em] text-t1-black/60 uppercase"
-                      >
-                        <LockClosedIcon class="h-2.5 w-2.5" /> Internal
-                      </span>
-                      <span
-                        v-else
-                        class="flex items-center gap-1 text-[10px] font-medium tracking-[0.12em] text-t1-blue uppercase"
-                      >
-                        <EyeIcon class="h-2.5 w-2.5" /> Prospect
-                      </span>
-                    </div>
-                    <p class="mt-0.5 text-[13px] font-light text-t1-black/70">{{ entry.summary }}</p>
-                    <p
-                      v-if="derivedFrom[entry.id as ComponentId]"
-                      class="mt-1 text-[11px] font-light text-t1-black/55"
-                    >
-                      {{ derivedFrom[entry.id as ComponentId] }}
-                    </p>
-                  </div>
+                <p v-if="saveError" class="mb-3 text-xs font-normal text-t1-danger">{{ saveError }}</p>
 
-                  <div class="flex shrink-0 flex-col items-end gap-1.5">
-                    <span
-                      class="text-[11px] font-light"
-                      :class="
-                        fillLabel(ws, entry.id as ComponentId).empty
-                          ? 'text-t1-black/45'
-                          : 'text-t1-black/70'
-                      "
-                    >
-                      {{ fillLabel(ws, entry.id as ComponentId).text }}
-                    </span>
+                <div v-for="group in groups" :key="group.name" class="mt-5">
+                  <div class="mb-2 flex items-center justify-between">
+                    <h3 class="text-[10px] font-medium tracking-[0.12em] text-t1-grey uppercase">
+                      {{ group.name }}
+                    </h3>
                     <button
-                      v-if="populatable.has(entry.id as ComponentId)"
                       type="button"
-                      class="rounded-full border border-t1-black/25 px-3.5 py-1.5 text-[11px] font-normal text-t1-black transition-colors hover:border-t1-black disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-t1-black/25"
-                      :disabled="!enabled.includes(entry.id as ComponentId)"
-                      :title="
-                        enabled.includes(entry.id as ComponentId)
-                          ? undefined
-                          : 'Select this component to fill it in'
-                      "
-                      @click="openDialog = entry.id as ComponentId"
+                      class="text-[11px] font-normal text-t1-blue hover:underline"
+                      @click="toggleGroup(group.name)"
                     >
-                      {{ fillLabel(ws, entry.id as ComponentId).empty ? 'Populate' : 'Edit' }}
+                      Toggle group
                     </button>
                   </div>
-                </li>
-              </ul>
-            </template>
+                  <ul class="flex flex-col gap-1.5">
+                    <li
+                      v-for="entry in group.items"
+                      :key="entry.id"
+                      class="flex cursor-pointer items-start gap-3.5 rounded-t1 border px-4 py-3 transition-colors"
+                      :class="
+                        enabled.includes(entry.id as ComponentId)
+                          ? 'border-t1-blue bg-t1-blue/6'
+                          : 'border-t1-line bg-white hover:border-t1-black'
+                      "
+                      @click="toggle(entry.id as ComponentId)"
+                    >
+                      <!-- Clicks bubble to the row, so the row and the box toggle together -->
+                      <button
+                        type="button"
+                        role="checkbox"
+                        :aria-checked="enabled.includes(entry.id as ComponentId)"
+                        :aria-label="`Show ${entry.name} in this room`"
+                        class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-t1 border transition-colors"
+                        :class="
+                          enabled.includes(entry.id as ComponentId)
+                            ? 'border-t1-blue bg-t1-blue text-white'
+                            : 'border-t1-black/30 bg-white'
+                        "
+                      >
+                        <CheckIcon v-if="enabled.includes(entry.id as ComponentId)" class="h-3 w-3" />
+                      </button>
 
-            <div class="mb-6 flex items-start gap-2.5 rounded-t1 border border-dashed border-t1-line px-4 py-3">
-              <LockClosedIcon class="mt-0.5 h-3.5 w-3.5 shrink-0 text-t1-black/55" />
-              <p class="text-[13px] font-light text-t1-black/70">
-                <span class="font-normal text-t1-black">Buyer intent signals</span> aren't listed:
-                they fill in from visitor activity and only you ever see them.
-              </p>
+                      <div class="min-w-0 flex-1">
+                        <div class="flex flex-wrap items-center gap-2">
+                          <span class="text-sm font-normal text-t1-black">{{ entry.name }}</span>
+                          <span
+                            v-if="entry.page"
+                            class="rounded-full border border-t1-black/25 px-2 py-px text-[10px] font-medium tracking-[0.12em] text-t1-black/70 uppercase"
+                          >
+                            Full page
+                          </span>
+                        </div>
+                        <p class="mt-0.5 text-[13px] font-light text-t1-black/70">
+                          {{ entry.summary }}
+                        </p>
+                        <p
+                          v-if="derivedFrom[entry.id as ComponentId]"
+                          class="mt-1 text-[11px] font-light text-t1-black/55"
+                        >
+                          {{ derivedFrom[entry.id as ComponentId] }}
+                        </p>
+                      </div>
+
+                      <div class="flex shrink-0 flex-col items-end gap-1.5">
+                        <span
+                          class="text-[11px] font-light"
+                          :class="
+                            fillLabel(ws, entry.id as ComponentId).empty
+                              ? 'text-t1-black/45'
+                              : 'text-t1-black/70'
+                          "
+                        >
+                          {{ fillLabel(ws, entry.id as ComponentId).text }}
+                        </span>
+                        <button
+                          v-if="populatable.has(entry.id as ComponentId)"
+                          type="button"
+                          class="rounded-full border border-t1-black/25 bg-white px-3.5 py-1.5 text-[11px] font-normal text-t1-black transition-colors hover:border-t1-black disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-t1-black/25"
+                          :disabled="!enabled.includes(entry.id as ComponentId)"
+                          :title="
+                            enabled.includes(entry.id as ComponentId)
+                              ? undefined
+                              : 'Select this component to fill it in'
+                          "
+                          @click.stop="openDialog = entry.id as ComponentId"
+                        >
+                          {{ fillLabel(ws, entry.id as ComponentId).empty ? 'Populate' : 'Edit' }}
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div v-if="!groups.length" class="py-8 text-sm text-t1-black/60">
+                  No components match your filter.
+                </div>
+
+                <div class="my-6 flex items-start gap-2.5 rounded-t1 border border-dashed border-t1-line px-4 py-3">
+                  <LockClosedIcon class="mt-0.5 h-3.5 w-3.5 shrink-0 text-t1-black/55" />
+                  <p class="text-[13px] font-light text-t1-black/70">
+                    <span class="font-normal text-t1-black">Buyer intent signals</span> aren't
+                    listed: they fill in from visitor activity and only you ever see them.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Room preview: what the prospect will get, as ticked -->
+              <aside class="rounded-t1 bg-t1-black p-6 text-white xl:sticky xl:top-5">
+                <div class="text-[10px] font-medium tracking-[0.12em] text-white/60 uppercase">
+                  Room preview
+                </div>
+                <h4 class="mt-1.5 mb-4 text-xl leading-tight font-light">
+                  {{ ws.prospectName }} <span class="text-t1-green">×</span> Talon.One
+                </h4>
+                <dl class="mb-4 grid grid-cols-[4.5rem_1fr] gap-x-3 gap-y-1.5 text-[13px]">
+                  <dt class="text-white/60">Go-live</dt>
+                  <dd :class="ws.targetGoLive.date ? '' : 'text-white/50 italic'">
+                    {{ ws.targetGoLive.date || 'Not set' }}
+                  </dd>
+                  <dt class="text-white/60">AE</dt>
+                  <dd>{{ ws.aeFirstName }}</dd>
+                </dl>
+                <div class="text-[10px] font-medium tracking-[0.12em] text-white/60 uppercase">
+                  Components
+                </div>
+                <ol
+                  v-if="selectedEntries.length"
+                  class="mt-2 max-h-72 list-decimal space-y-0.5 overflow-auto pl-5 text-[13px] font-light"
+                >
+                  <li v-for="entry in selectedEntries" :key="entry.id">{{ entry.name }}</li>
+                </ol>
+                <p v-else class="mt-2 text-[13px] font-light text-white/50 italic">None selected</p>
+                <ul class="mt-4 space-y-1 text-xs text-white/60">
+                  <li :class="ws.targetGoLive.date ? 'text-white' : ''">
+                    {{ ws.targetGoLive.date ? '●' : '○' }} Go-live date set
+                  </li>
+                  <li :class="enabledCount ? 'text-white' : ''">
+                    {{ enabledCount ? '●' : '○' }} At least one component
+                  </li>
+                </ul>
+              </aside>
             </div>
           </template>
         </section>
