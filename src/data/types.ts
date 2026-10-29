@@ -117,6 +117,33 @@ export interface SuccessStory {
  */
 export type RoomStatus = 'draft' | 'published' | 'archived'
 
+/**
+ * Components an AE can switch on or off for a room from the "My rooms" page. `engagement` is not
+ * here: Buyer intent signals are filled from visitor activity and only ever shown to the AE.
+ */
+export type ComponentId =
+  | 'hero'
+  | 'links'
+  | 'media'
+  | 'recordings'
+  | 'team'
+  | 'milestone'
+  | 'whatsnext'
+  | 'documents'
+  | 'journey'
+  | 'requirements'
+  | 'timeline'
+  | 'architecture'
+  | 'stories'
+
+/** What the "My rooms" list shows for each room the AE owns. */
+export interface RoomSummary {
+  slug: string
+  status: RoomStatus
+  prospectName: string
+  targetGoLive: { date: string; label: string }
+}
+
 export interface Workspace {
   id: string
   slug: string
@@ -128,6 +155,8 @@ export interface Workspace {
   targetGoLive: { date: string; label: string }
   bookMeetingUrl: string
   slackChannelUrl: string
+  /** Components shown in this room. Missing on rooms saved before the picker existed: all are shown. */
+  enabledComponents?: ComponentId[]
   components: {
     hero: WelcomeHeroConfig
     links: LinkTile[]

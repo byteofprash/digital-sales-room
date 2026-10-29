@@ -11,16 +11,18 @@ service cloud.firestore {
 
     // rooms/{slug} is the prospect-facing document: anyone with the link can
     // read it (the slug itself is the access control — see the workspace
-    // Home plan's "audience model"), but the collection can never be listed,
-    // so nobody can enumerate other prospects' rooms. Only the owning AE can
-    // write, and only a talon.one account can ever become an owner.
+    // Home plan's "audience model"). The collection can only be listed by an
+    // AE asking for their own rooms (where ownerUid == their uid), so nobody
+    // can enumerate other prospects' rooms. Only the owning AE can write, and
+    // only a talon.one account can ever become an owner.
     match /rooms/{slug} {
       // Only published rooms are visible to prospects; drafts and archived
       // rooms are readable by their owner alone. Rooms created before
       // `status` existed count as published.
       allow get: if resource.data.get('status', 'published') == 'published'
         || (isTalonOneAe() && resource.data.ownerUid == request.auth.uid);
-      allow list: if false;
+      allow list: if isTalonOneAe()
+        && resource.data.ownerUid == request.auth.uid;
 
       allow create: if isTalonOneAe()
         && request.resource.data.ownerUid == request.auth.uid;

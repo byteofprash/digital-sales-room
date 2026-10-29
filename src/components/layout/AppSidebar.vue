@@ -3,24 +3,38 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { CheckIcon } from '@heroicons/vue/24/solid'
 import BrandLogo from '@/components/brand/BrandLogo.vue'
-import type { Milestone, TeamMember } from '@/data/types'
+import type { ComponentId, Milestone, TeamMember } from '@/data/types'
+import { isComponentEnabled } from '@/lib/enabledComponents'
 
 const props = defineProps<{
   prospectName: string
   accountManager: TeamMember
   milestones: Milestone[]
+  /** Components switched on for the room; omit to show every page */
+  enabledComponents?: ComponentId[]
 }>()
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
 
-const navItems = [
+const allNavItems: { label: string; section: string | null; component?: ComponentId }[] = [
   { label: 'Workspace Home', section: null },
-  { label: 'Requirements', section: 'requirements' },
-  { label: 'Joint Project Timeline', section: 'timeline' },
-  { label: 'Architecture', section: 'architecture' },
-  { label: 'Customer Success Stories', section: 'stories' },
+  { label: 'Requirements', section: 'requirements', component: 'requirements' },
+  { label: 'Joint Project Timeline', section: 'timeline', component: 'timeline' },
+  { label: 'Architecture', section: 'architecture', component: 'architecture' },
+  { label: 'Customer Success Stories', section: 'stories', component: 'stories' },
 ]
+
+const navItems = computed(() =>
+  allNavItems.filter(
+    (item) =>
+      !item.component ||
+      isComponentEnabled({ enabledComponents: props.enabledComponents }, item.component),
+  ),
+)
+const showJourney = computed(() =>
+  isComponentEnabled({ enabledComponents: props.enabledComponents }, 'journey'),
+)
 
 function isActiveSection(section: string | null) {
   return (route.params.section ?? null) === section
@@ -70,14 +84,14 @@ void props
         {{ item.label }}
       </RouterLink>
 
-      <div class="mt-1 border-t border-t1-line-dark px-4.5 pt-4 pb-2">
+      <div v-if="showJourney" class="mt-1 border-t border-t1-line-dark px-4.5 pt-4 pb-2">
         <span class="text-[10px] font-medium tracking-[0.12em] text-white/60 uppercase">
           Your Journey
         </span>
       </div>
 
       <div
-        v-for="milestone in milestones"
+        v-for="milestone in showJourney ? milestones : []"
         :key="milestone.id"
         class="flex items-center gap-2.5 px-4.5 py-1.5"
         :class="milestone.status === 'active' ? 'bg-white/5' : ''"

@@ -1,8 +1,17 @@
-import { doc, getDoc, runTransaction, serverTimestamp } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  runTransaction,
+  serverTimestamp,
+  where,
+} from 'firebase/firestore'
 import type { EngagementEvent, Workspace } from './types'
 import { seedFixtures } from './fixtures'
 import { auth, db } from '@/lib/firebase'
-import type { WorkspaceRepository } from './workspaceRepository'
+import { toRoomSummary, type WorkspaceRepository } from './workspaceRepository'
 import { withDefaults } from './defaults'
 
 type PublicFields = Omit<Workspace, 'components'> & {
@@ -79,6 +88,13 @@ async function seedRoom(slug: string, template: Workspace): Promise<Workspace> {
 }
 
 export const firestoreWorkspaceRepository: WorkspaceRepository = {
+  async listOwnedRooms(ownerUid) {
+    if (!ownerUid) return []
+    // The where() clause is what firestore.rules checks the list permission against.
+    const snap = await getDocs(query(collection(db!, 'rooms'), where('ownerUid', '==', ownerUid)))
+    return snap.docs.map((room) => toRoomSummary(room.data() as Workspace))
+  },
+
   getWorkspace: readWorkspace,
 
   async updateWorkspace(slug, updater) {

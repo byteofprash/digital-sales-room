@@ -51,6 +51,9 @@ const avatarInitials = computed(() => {
     </template>
 
     <template v-else>
+      <RouterLink to="/ae" class="text-[11px] font-normal text-t1-black/70 hover:text-t1-black">
+        My rooms
+      </RouterLink>
       <RouterLink
         to="/components"
         class="text-[11px] font-normal text-t1-black/70 hover:text-t1-black"
@@ -92,7 +95,17 @@ const avatarInitials = computed(() => {
       ></span>
     </button>
 
-    <div class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-black">
+    <!-- The profile avatar opens the AE's own page; signed-out visitors just see a placeholder -->
+    <RouterLink
+      v-if="session.isAeAuthenticated"
+      to="/ae"
+      title="My rooms"
+      aria-label="My rooms"
+      class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-black transition-opacity hover:opacity-80"
+    >
+      <span class="text-[11px] font-normal text-white">{{ avatarInitials }}</span>
+    </RouterLink>
+    <div v-else class="ml-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-t1-black">
       <span class="text-[11px] font-normal text-white">{{ avatarInitials }}</span>
     </div>
   </div>

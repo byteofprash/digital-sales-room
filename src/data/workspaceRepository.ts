@@ -1,4 +1,4 @@
-import type { Workspace } from './types'
+import type { RoomSummary, Workspace } from './types'
 import { withDefaults } from './defaults'
 import { seedFixtures } from './fixtures'
 import { firebaseEnabled } from '@/lib/firebase'
@@ -6,7 +6,18 @@ import { firestoreWorkspaceRepository } from './firestoreWorkspaceRepository'
 
 const STORAGE_PREFIX = 'dsr:workspace:'
 
+export function toRoomSummary(ws: Workspace): RoomSummary {
+  return {
+    slug: ws.slug,
+    status: ws.status ?? 'published',
+    prospectName: ws.prospectName,
+    targetGoLive: ws.targetGoLive,
+  }
+}
+
 export interface WorkspaceRepository {
+  /** The rooms owned by the signed-in AE, in no particular order. */
+  listOwnedRooms(ownerUid: string | null): Promise<RoomSummary[]>
   getWorkspace(slug: string): Promise<Workspace | null>
   updateWorkspace(
     slug: string,
@@ -35,6 +46,17 @@ function saveToStorage(slug: string, workspace: Workspace) {
  * interface — components/views only ever depend on that interface.
  */
 export const mockWorkspaceRepository: WorkspaceRepository = {
+  async listOwnedRooms() {
+    // Every room this browser knows about: edited ones in storage, plus untouched fixtures.
+    const bySlug = new Map<string, Workspace>(Object.entries(seedFixtures))
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (!key?.startsWith(STORAGE_PREFIX)) continue
+      const stored = loadFromStorage(key.slice(STORAGE_PREFIX.length))
+      if (stored) bySlug.set(stored.slug, stored)
+    }
+    return [...bySlug.values()].map(toRoomSummary)
+  },
   async getWorkspace(slug) {
     const found = loadFromStorage(slug) ?? seedFixtures[slug]
     return found ? withDefaults(found) : null

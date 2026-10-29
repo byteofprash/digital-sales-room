@@ -5,6 +5,11 @@ const router = createRouter({
   routes: [
     { path: '/', redirect: '/room/acme-corp' },
     {
+      path: '/ae',
+      name: 'ae-rooms',
+      component: () => import('@/views/AeRoomsView.vue'),
+    },
+    {
       path: '/components',
       name: 'component-library',
       component: () => import('@/views/ComponentCatalogView.vue'),

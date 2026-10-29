@@ -2,6 +2,8 @@ export type ComponentVisibility = 'prospect' | 'internal'
 
 export interface CatalogEntry {
   id: string
+  /** Category the AE picker files this component under */
+  group: string
   name: string
   /** One line an AE can read to decide whether the room needs it */
   summary: string
@@ -21,6 +23,7 @@ export interface CatalogEntry {
 export const componentCatalog: CatalogEntry[] = [
   {
     id: 'hero',
+    group: 'Introduction',
     name: 'Welcome hero',
     summary: 'A personal greeting that opens the room and tells returning visitors what changed.',
     whatItShows: [
@@ -34,6 +37,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'links',
+    group: 'Introduction',
     name: 'Quick links',
     summary: 'A grid of tiles that send the buying committee to the pages or tools they need first.',
     whatItShows: [
@@ -47,6 +51,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'media',
+    group: 'Introduction',
     name: 'Media spotlight',
     summary: 'A featured video, such as a personal welcome or a recorded walkthrough.',
     whatItShows: [
@@ -60,6 +65,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'recordings',
+    group: 'Proof',
     name: 'Recordings',
     summary: 'A list of links to recordings, such as Gong calls or Google Drive videos. It takes the place of the featured video when a room has no video.',
     whatItShows: [
@@ -74,6 +80,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'team',
+    group: 'Introduction',
     name: 'Team card',
     summary: 'Who the prospect is working with at Talon.One, and how to reach them.',
     whatItShows: [
@@ -88,6 +95,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'milestone',
+    group: 'Plan',
     name: 'Go-live countdown',
     summary: 'Keeps the target go-live date front and centre, with the time remaining.',
     whatItShows: ['Label and target date', 'Days remaining until go-live'],
@@ -98,6 +106,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'whatsnext',
+    group: 'Plan',
     name: "What's next",
     summary: 'A short view of the joint timeline: only the step in progress and the one after it.',
     whatItShows: [
@@ -112,6 +121,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'documents',
+    group: 'Resources',
     name: 'Documents',
     summary: 'The shared files for the deal: security reports, specs, ROI models and recordings.',
     whatItShows: [
@@ -126,6 +136,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'journey',
+    group: 'Plan',
     name: 'Project journey',
     summary: 'The deal milestones in the sidebar, so everyone can see where the project stands.',
     whatItShows: [
@@ -140,6 +151,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'requirements',
+    group: 'Solution',
     name: 'Requirements',
     summary: 'A page that points the buying committee to the requirements document for the deal.',
     whatItShows: [
@@ -154,6 +166,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'timeline',
+    group: 'Plan',
     name: 'Joint project timeline',
     summary: 'A shared plan of the next steps, who owns each one and when it is due.',
     whatItShows: [
@@ -168,6 +181,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'architecture',
+    group: 'Solution',
     name: 'Architecture',
     summary: 'A page that links to the technical architecture and integration documents.',
     whatItShows: [
@@ -182,6 +196,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'stories',
+    group: 'Proof',
     name: 'Customer success stories',
     summary: 'Reference stories from real customers, picked to match the prospect.',
     whatItShows: [
@@ -196,6 +211,7 @@ export const componentCatalog: CatalogEntry[] = [
   },
   {
     id: 'engagement',
+    group: 'Internal',
     name: 'Buyer intent signals',
     summary: 'Who opened what, and for how long. Only the AE ever sees this; prospects never do.',
     whatItShows: [
