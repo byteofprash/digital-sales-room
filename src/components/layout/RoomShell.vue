@@ -27,6 +27,7 @@ watch(() => route.params.slug, loadForCurrentSlug)
       :prospect-name="store.workspace.prospectName"
       :account-manager="store.workspace.team[0]"
       :milestones="store.workspace.milestones"
+      :enabled-components="store.workspace.enabledComponents"
     />
 
     <main class="flex min-w-0 flex-1 flex-col overflow-hidden">

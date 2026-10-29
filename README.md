@@ -47,7 +47,7 @@ gains a new key on the next save, no migration required.
 Buyer Intent Signals telemetry, which lives in `rooms/{slug}/private/engagement` — split out
 because Firestore security rules can't redact one field from an anonymous prospect's read of the
 parent document, only allow/deny the whole thing. Rules are in `firestore.rules`: anyone with the
-link can `get` a room (the slug is the access control), the collection can never be `list`ed, and
+link can `get` a room (the slug is the access control), the collection can only be `list`ed by an AE asking for their own rooms, and
 only the owning `@talon.one` AE can write.
 
 ### Turning it on
