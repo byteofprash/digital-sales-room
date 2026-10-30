@@ -6,16 +6,10 @@ import {
   signOut as firebaseSignOut,
 } from 'firebase/auth'
 import { auth, firebaseEnabled, googleProvider } from '@/lib/firebase'
+import { devAuthBypass } from '@/lib/devBypass'
 
 const ALLOWED_EMAIL_DOMAIN = 'talon.one'
 
-/**
- * Front-end counterpart of the API's DEV_AUTH_BYPASS: with VITE_DEV_AUTH_BYPASS=true the app starts
- * signed in as the dev AE, so /ae and Edit mode need no click. It only takes effect against the
- * localStorage mock; once Firebase is configured, Firestore's rules require a real sign-in
- * whatever this says, so it is ignored there.
- */
-const devBypass = import.meta.env.VITE_DEV_AUTH_BYPASS === 'true' && !firebaseEnabled
 const DEV_AE_NAME = 'Stefan Weber'
 
 /**
@@ -26,12 +20,13 @@ const DEV_AE_NAME = 'Stefan Weber'
  * fallback in workspaceRepository.ts).
  */
 export const useSessionStore = defineStore('session', () => {
-  const isAeAuthenticated = ref(devBypass)
-  const aeName = ref(devBypass ? DEV_AE_NAME : '')
+  const isAeAuthenticated = ref(devAuthBypass)
+  const aeName = ref(devAuthBypass ? DEV_AE_NAME : '')
   const aeUid = ref<string | null>(null)
   const authError = ref<string | null>(null)
 
-  if (firebaseEnabled && auth) {
+  // In dev bypass the identity is fixed, so Firebase's (absent) user must not sign it out.
+  if (firebaseEnabled && auth && !devAuthBypass) {
     onAuthStateChanged(auth, (user) => {
       isAeAuthenticated.value = Boolean(user)
       aeName.value = user?.displayName ?? ''
@@ -42,7 +37,7 @@ export const useSessionStore = defineStore('session', () => {
   async function signInAsAe() {
     authError.value = null
 
-    if (!firebaseEnabled || !auth) {
+    if (devAuthBypass || !firebaseEnabled || !auth) {
       // Dev-only stand-in — no Firebase project configured yet.
       isAeAuthenticated.value = true
       aeName.value = DEV_AE_NAME

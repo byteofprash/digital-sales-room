@@ -75,10 +75,15 @@ The one seeded fixture (`acme-corp`) self-creates in Firestore, owned by whichev
 account first visits `/room/acme-corp` while signed in — there's no separate "create room" step
 yet (see deferred AE portal below).
 
-**Skipping sign-in while developing:** set `VITE_DEV_AUTH_BYPASS=true` in `.env.local` and the app
+**Skipping sign-in while developing:** set `VITE_DEV_AUTH_BYPASS=true` (in `.env.local`, or as a
+Vercel environment variable followed by a redeploy, since Vite bakes it in at build time) and the app
 starts signed in as the dev AE, so `/ae` and Edit mode need no click. It is the front-end twin of
-the API's `DEV_AUTH_BYPASS` and only works against the localStorage mock: once the `VITE_FIREBASE_*`
-values are set, Firestore's rules require a real `@talon.one` sign-in and the flag is ignored.
+the API's `DEV_AUTH_BYPASS`. With no Firebase it just uses the localStorage mock. With Firebase
+configured, rooms are listed and saved through `/api/rooms` instead of straight to Firestore (whose
+rules would refuse an anonymous browser), so the API's own `DEV_AUTH_BYPASS=true` must be on too.
+Like the API bypass, this leaves everything open to anyone with the URL: remove both before real
+prospects or data are involved. Rooms read this way show an empty Buyer intent feed, because the API
+never returns it.
 
 ## Room sections
 

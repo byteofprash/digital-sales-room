@@ -37,7 +37,7 @@ export interface RoomContent {
 type Obj = Record<string, unknown>
 
 const MILESTONE_STATUSES = ['done', 'active', 'upcoming']
-const COLORWAYS = ['electric', 'teal', 'lime', 'navy']
+const COLORWAYS = ['blue', 'pine', 'green', 'black', 'electric', 'teal', 'lime', 'navy']
 const LINK_ICONS = ['plus', 'branch', 'users']
 const FILE_TYPES = ['pdf', 'markdown', 'sheet', 'recording', 'other']
 const HERO_ICONS = ['document', 'calendar']
@@ -123,8 +123,14 @@ const ROOM_KEYS = [
   'milestones',
   'targetGoLive',
   'components',
+  'enabledComponents',
 ]
 const COMPONENT_KEYS = ['hero', 'links', 'media', 'documents', 'requirements', 'timeline', 'architecture', 'stories', 'recordings']
+/** Components an AE can switch on for a room (ComponentId in src/data/types.ts). */
+const COMPONENT_IDS = [
+  'hero', 'links', 'media', 'recordings', 'team', 'milestone', 'whatsnext', 'documents',
+  'journey', 'requirements', 'timeline', 'architecture', 'stories',
+]
 const OWNER_SIDES = ['talon', 'prospect', 'joint']
 
 /**
@@ -171,6 +177,13 @@ export function validateRoomContent(body: Obj, opts: { partial: boolean; extraKe
       c.date(t, 'date', at)
       c.str(t, 'label', at)
     })
+  }
+
+  if (has('enabledComponents')) {
+    const list = body.enabledComponents
+    if (!Array.isArray(list) || list.some((id) => typeof id !== 'string' || !COMPONENT_IDS.includes(id))) {
+      c.errors.push(`enabledComponents must be a list of: ${COMPONENT_IDS.join(', ')}`)
+    }
   }
 
   if (has('components')) {
