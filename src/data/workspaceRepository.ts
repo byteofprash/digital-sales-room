@@ -3,6 +3,8 @@ import { withDefaults } from './defaults'
 import { seedFixtures } from './fixtures'
 import { firebaseEnabled } from '@/lib/firebase'
 import { firestoreWorkspaceRepository } from './firestoreWorkspaceRepository'
+import { apiWorkspaceRepository } from './apiWorkspaceRepository'
+import { devAuthBypass } from '@/lib/devBypass'
 
 const STORAGE_PREFIX = 'dsr:workspace:'
 
@@ -77,6 +79,8 @@ export const mockWorkspaceRepository: WorkspaceRepository = {
  * working against the localStorage mock. No call site needs to know which
  * one is active.
  */
-export const workspaceRepository: WorkspaceRepository = firebaseEnabled
-  ? firestoreWorkspaceRepository
-  : mockWorkspaceRepository
+export const workspaceRepository: WorkspaceRepository = !firebaseEnabled
+  ? mockWorkspaceRepository
+  : devAuthBypass
+    ? apiWorkspaceRepository
+    : firestoreWorkspaceRepository
