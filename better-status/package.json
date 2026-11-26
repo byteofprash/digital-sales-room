@@ -1,0 +1,14 @@
+{
+  "name": "better-status",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Google Calendar -> Talon.One rules -> Slack status",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "start": "node src/cli.ts",
+    "once": "node src/cli.ts --once",
+    "dry": "node src/cli.ts --once --dry",
+    "test": "node --test \"test/*.test.ts\""
+  }
+}
